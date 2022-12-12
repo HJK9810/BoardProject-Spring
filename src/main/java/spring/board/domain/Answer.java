@@ -7,7 +7,7 @@ import lombok.Setter;
 @Entity
 @Getter @Setter
 @Table(name = "ANSWER")
-public class Answer {
+public class Answer extends BaseTime {
 
     @Id @GeneratedValue
     @Column

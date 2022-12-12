@@ -9,7 +9,7 @@ import java.util.List;
 @Entity
 @Getter @Setter
 @Table(name = "QUESTION")
-public class Question {
+public class Question extends BaseTime {
 
     @Id @GeneratedValue
     @Column
@@ -23,7 +23,7 @@ public class Question {
     private String images;
 
     @OneToOne
-    @JoinColumn(name = "userId")
+    @JoinColumn(name = "user_id")
     private User user;
 
     @OneToMany(mappedBy = "question")
@@ -36,10 +36,9 @@ public class Question {
     public Question() {
     }
 
-    public Question(String title, String contents, String images, User user) {
+    public Question(String title, String contents, String images) {
         this.title = title;
         this.contents = contents;
         this.images = images;
-        this.user = user;
     }
 }

@@ -14,6 +14,6 @@ public class User extends BaseTime {
     private Long id;
     @Column
     private String name;
-    @Column
+    @Column(unique = true)
     private String email;
 }

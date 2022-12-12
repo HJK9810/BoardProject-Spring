@@ -8,5 +8,5 @@ public interface AnswerService {
 
     List<Answer> answerList(Long id);
 
-    Answer addAnswer(Answer answer);
+    Answer addAnswer(Long questionId, Answer answer);
 }

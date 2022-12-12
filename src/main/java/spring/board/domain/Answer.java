@@ -1,5 +1,6 @@
 package spring.board.domain;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -15,7 +16,8 @@ public class Answer extends BaseTime {
     @Column
     private String contents;
 
-    @ManyToOne(optional = false)
+    @JsonBackReference
+    @ManyToOne(optional = false, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "question_id")
     private Question question;
 

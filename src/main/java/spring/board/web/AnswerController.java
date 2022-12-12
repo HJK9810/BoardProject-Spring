@@ -20,16 +20,17 @@ public class AnswerController {
 
     @GetMapping("/list/{questionId}")
     public ResponseEntity<List<Answer>> showAnswers(@PathVariable Long questionId) {
-        List<Answer> list = answerService.answerList(questionId);
+//        List<Answer> list = answerService.answerList(questionId);
+        List<Answer> list = questionService.viewOne(questionId).getAnswers();
 
         return new ResponseEntity<List<Answer>>(list, HttpStatus.OK);
     }
 
     @PostMapping("/add/{questionId}")
     public ResponseEntity<Answer> addAnswer(@PathVariable Long questionId, @RequestBody Answer answer) {
-        answer.setQuestion(questionService.viewOne(questionId));
+        Answer addAnswer = answerService.addAnswer(questionId, answer);
+//        questionService.viewOne(questionId).addAnswer(addAnswer);
 
-        Answer addAnswer = answerService.addAnswer(answer);
         return new ResponseEntity<Answer>(addAnswer, HttpStatus.OK);
     }
 }

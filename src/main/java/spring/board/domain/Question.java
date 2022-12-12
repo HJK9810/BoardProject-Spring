@@ -1,9 +1,11 @@
 package spring.board.domain;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -22,15 +24,17 @@ public class Question extends BaseTime {
     @Column
     private String images;
 
-    @OneToOne
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
 
-    @OneToMany(mappedBy = "question")
-    private List<Answer> answers;
+    @JsonManagedReference
+    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Answer> answers = new ArrayList<>();
 
     public void addAnswer(Answer answer) {
-        answers.add(answer);
+        this.answers.add(answer);
+        answer.setQuestion(this);
     }
 
     public Question() {

@@ -37,7 +37,7 @@ public class QuestionServiceImpl implements QuestionService{
         Question question = new Question(form.getTitle(), form.getContents(), images);
 
         questionRepository.save(question);
-        return null;
+        return question;
     }
 
     @Override
@@ -45,10 +45,9 @@ public class QuestionServiceImpl implements QuestionService{
         String images = fileStore.storeFiles(form.getImages());
 
         questionRepository.findById(id).ifPresent(question -> {
-
-            if (!form.getTitle().isEmpty()) question.setTitle(form.getTitle());
-            if (!form.getContents().isEmpty()) question.setContents(form.getContents());
-            if (!images.equals("") && images.length() != 0) question.setImages(images);
+            if (!question.getTitle().equals(form.getTitle())) question.setTitle(form.getTitle());
+            if (!question.getContents().equals(form.getContents())) question.setContents(form.getContents());
+            if (!question.equals(images)) question.setImages(images);
 
             questionRepository.save(question);
         });

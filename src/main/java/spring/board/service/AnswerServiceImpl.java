@@ -27,6 +27,6 @@ public class AnswerServiceImpl implements AnswerService {
         question.addAnswer(answer);
 
         answerRepository.save(answer);
-        return null;
+        return answer;
     }
 }

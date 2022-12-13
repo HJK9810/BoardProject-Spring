@@ -2,6 +2,8 @@ package spring.board.web;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,10 +21,10 @@ public class QuestionController {
     private final QuestionService questionService;
 
     @GetMapping("/list")
-    public ResponseEntity<List<Question>> showList() {
-        List<Question> list = questionService.findList();
+    public ResponseEntity<Page<Question>> showList(Pageable pageable) {
+        Page<Question> list = questionService.findList(pageable);
 
-        return new ResponseEntity<List<Question>>(list, HttpStatus.OK);
+        return new ResponseEntity<Page<Question>>(list, HttpStatus.OK);
     }
 
     @GetMapping("/list/{userid}")

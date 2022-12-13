@@ -1,6 +1,8 @@
 package spring.board.service;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import spring.board.domain.Question;
 import spring.board.file.FileStore;
@@ -17,8 +19,8 @@ public class QuestionServiceImpl implements QuestionService{
     private final FileStore fileStore;
 
     @Override
-    public List<Question> findList() {
-        return questionRepository.findAll();
+    public Page<Question> findList(Pageable pageable) {
+        return questionRepository.findAll(pageable);
     }
 
     @Override

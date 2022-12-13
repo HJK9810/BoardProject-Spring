@@ -42,7 +42,7 @@ public class QuestionController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<Question> addQuestion(@RequestBody QuestionForm form) {
+    public ResponseEntity<Question> addQuestion(@ModelAttribute QuestionForm form) {
         String images = fileStore.storeFiles(form.getImages());
 
         log.info("form={}", form);
@@ -58,7 +58,7 @@ public class QuestionController {
     }
 
     @PostMapping("/edit/{id}")
-    public ResponseEntity<Question> edit(@PathVariable Long id, @RequestBody QuestionForm form) {
+    public ResponseEntity<Question> edit(@PathVariable Long id, @ModelAttribute QuestionForm form) {
         String images = fileStore.storeFiles(form.getImages());
 
         Question question = new Question(form.getTitle(), form.getContents(), images);

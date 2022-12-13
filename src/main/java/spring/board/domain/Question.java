@@ -24,7 +24,7 @@ public class Question extends BaseTime {
     @Column
     private String images;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id")
     private User user;
 

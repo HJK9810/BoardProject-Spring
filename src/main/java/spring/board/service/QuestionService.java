@@ -1,6 +1,7 @@
 package spring.board.service;
 
 import spring.board.domain.Question;
+import spring.board.web.QuestionForm;
 
 import java.util.List;
 
@@ -11,6 +12,6 @@ public interface QuestionService {
 
     Question viewOne(Long id);
 
-    Question addQuestion(Question question);
-    Question updateQuestion(Long id, Question question);
+    Question addQuestion(QuestionForm form);
+    Question updateQuestion(Long id, QuestionForm form);
 }

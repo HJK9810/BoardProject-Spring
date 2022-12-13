@@ -3,7 +3,9 @@ package spring.board.service;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import spring.board.domain.Question;
+import spring.board.file.FileStore;
 import spring.board.repository.QuestionRepository;
+import spring.board.web.QuestionForm;
 
 import java.util.List;
 
@@ -12,6 +14,7 @@ import java.util.List;
 public class QuestionServiceImpl implements QuestionService{
 
     private final QuestionRepository questionRepository;
+    private final FileStore fileStore;
 
     @Override
     public List<Question> findList() {
@@ -29,21 +32,27 @@ public class QuestionServiceImpl implements QuestionService{
     }
 
     @Override
-    public Question addQuestion(Question question) {
+    public Question addQuestion(QuestionForm form) {
+        String images = fileStore.storeFiles(form.getImages());
+        Question question = new Question(form.getTitle(), form.getContents(), images);
+
         questionRepository.save(question);
         return null;
     }
 
     @Override
-    public Question updateQuestion(Long id, Question question) {
-        questionRepository.findById(id).ifPresent(q -> {
+    public Question updateQuestion(Long id, QuestionForm form) {
+        String images = fileStore.storeFiles(form.getImages());
 
-            if (question.getTitle() != null || question.getTitle().length() != 0) q.setTitle(question.getTitle());
+        questionRepository.findById(id).ifPresent(question -> {
 
-            if (question.getContents() != null || question.getContents().length() != 0) q.setContents(question.getContents());
+            if (!form.getTitle().isEmpty()) question.setTitle(form.getTitle());
+            if (!form.getContents().isEmpty()) question.setContents(form.getContents());
+            if (!images.equals("") && images.length() != 0) question.setImages(images);
 
-            if (question.getImages() != null || question.getImages().length() != 0) q.setImages(question.getImages());
+            questionRepository.save(question);
         });
+
         return questionRepository.findById(id).get();
     }
 }

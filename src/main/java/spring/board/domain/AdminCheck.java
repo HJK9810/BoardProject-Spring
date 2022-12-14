@@ -1,5 +1,5 @@
 package spring.board.domain;
 
 public enum AdminCheck {
-    USER, ADMIN
+    ROLE_USER, ROLE_ADMIN
 }

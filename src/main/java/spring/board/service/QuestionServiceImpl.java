@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import spring.board.domain.Question;
 import spring.board.file.FileStore;
 import spring.board.repository.QuestionRepository;
+import spring.board.repository.UserRepository;
 import spring.board.web.QuestionForm;
 
 import java.util.List;
@@ -17,6 +18,7 @@ public class QuestionServiceImpl implements QuestionService{
 
     private final QuestionRepository questionRepository;
     private final FileStore fileStore;
+    private final UserRepository userRepository;
 
     @Override
     public Page<Question> findList(Pageable pageable) {
@@ -37,6 +39,13 @@ public class QuestionServiceImpl implements QuestionService{
     public Question addQuestion(QuestionForm form) {
         String images = fileStore.storeFiles(form.getImages());
         Question question = new Question(form.getTitle(), form.getContents(), images);
+
+        // for test user sample save
+//        User user = new User();
+//        user.setName("user3");
+//        user.setEmail("user3");
+//        userRepository.save(user);
+        question.setUser(userRepository.findByEmail("user2").get());
 
         questionRepository.save(question);
         return question;

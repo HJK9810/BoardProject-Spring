@@ -36,12 +36,4 @@ public class SecurityConfig {
         UserDetails admin = User.withUsername("admin").password("{noop}admin").roles("ADMIN", "USER").build();
         return new InMemoryUserDetailsManager(user, admin);
     }
-
-//    @Bean
-//    public UserDetailsService userDetailsService() {
-//        InMemoryUserDetailsManager manager = new InMemoryUserDetailsManager();
-//        manager.createUser(User.withUsername("user").password("{noop}user").authorities("USER").build());
-//        manager.createUser(User.withUsername("admin").password("{noop}admin").authorities("ADMIN").build());
-//        return manager;
-//    }
 }

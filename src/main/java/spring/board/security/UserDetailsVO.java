@@ -20,14 +20,17 @@ public class UserDetailsVO implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Collection<GrantedAuthority> authorities = new ArrayList<>();
-        authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
+        if (!user.getEmail().equals("admin")) authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
+        else authorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
+
         return authorities;
     }
 
     @Override
     public String getPassword() {
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-        return passwordEncoder.encode("user");
+        if (user.getEmail().equals("admin")) return passwordEncoder.encode("admin");
+        else return passwordEncoder.encode("user");
     }
 
     @Override

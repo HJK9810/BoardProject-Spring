@@ -5,7 +5,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import spring.board.domain.User;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import spring.board.domain.Users;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -14,7 +15,7 @@ import java.util.Collection;
 @RequiredArgsConstructor
 public class UserDetailsVO implements UserDetails {
 
-    private final User user;
+    private final Users user;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -25,7 +26,8 @@ public class UserDetailsVO implements UserDetails {
 
     @Override
     public String getPassword() {
-        return "user";
+        BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+        return passwordEncoder.encode("user");
     }
 
     @Override

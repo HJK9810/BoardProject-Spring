@@ -45,7 +45,7 @@ public class QuestionServiceImpl implements QuestionService{
 //        user.setName("user3");
 //        user.setEmail("user3");
 //        userRepository.save(user);
-        question.setUser(userRepository.findByEmail("user2").get());
+        question.setUsers(userRepository.findByEmail("user2").get());
 
         questionRepository.save(question);
         return question;

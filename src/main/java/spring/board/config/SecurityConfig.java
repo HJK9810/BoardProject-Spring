@@ -39,13 +39,13 @@ public class SecurityConfig {
         http.csrf().disable()
                 .authorizeHttpRequests((authorizeHttpRequests) ->
                         authorizeHttpRequests
-                                .requestMatchers("/image/**").permitAll()
+                                .requestMatchers("/image/**", "/login", "/logout").permitAll()
                                 .requestMatchers("/answer/**").hasRole("ADMIN")
                                 .requestMatchers("/question/**").hasRole("USER")
-                ).httpBasic(withDefaults())
+                ).formLogin(withDefaults())
                 .logout().logoutSuccessUrl("/login") // 로그아웃 성공 후 이동페이지
                 .deleteCookies("JSESSIONID", "remember-me"); // 로그아웃 후 쿠키 삭제
-//.formLogin(withDefaults())
+//.httpBasic(withDefaults())
         return http.build();
     }
 

@@ -5,9 +5,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import spring.board.domain.Question;
+import spring.board.domain.Users;
 import spring.board.file.FileStore;
 import spring.board.repository.QuestionRepository;
 import spring.board.repository.UserRepository;
+import spring.board.security.UserDetailsVO;
 import spring.board.web.QuestionForm;
 
 import java.util.List;
@@ -21,6 +23,11 @@ public class QuestionServiceImpl implements QuestionService{
     private final UserRepository userRepository;
 
     @Override
+    public Users changeUser(Object auth) {
+        return ((UserDetailsVO) auth).getUser();
+    }
+
+    @Override
     public Page<Question> findList(Pageable pageable) {
         return questionRepository.findAll(pageable);
     }
@@ -31,21 +38,19 @@ public class QuestionServiceImpl implements QuestionService{
     }
 
     @Override
-    public Question viewOne(Long id) {
-        return questionRepository.findById(id).get();
+    public Question viewOne(Long id, Users user) {
+        Question question = questionRepository.findById(id).get();
+        Users quser = question.getUsers();
+
+        if (quser.getEmail().equals(user.getEmail()) || quser.getEmail().equals("admin")) return question;
+        else return new Question();
     }
 
     @Override
-    public Question addQuestion(QuestionForm form) {
+    public Question addQuestion(QuestionForm form, Users user) {
         String images = fileStore.storeFiles(form.getImages());
         Question question = new Question(form.getTitle(), form.getContents(), images);
-
-        // for test user sample save
-//        User user = new User();
-//        user.setName("user3");
-//        user.setEmail("user3");
-//        userRepository.save(user);
-        question.setUsers(userRepository.findByEmail("user2").get());
+        question.setUsers(userRepository.findByEmail(user.getEmail()).get());
 
         questionRepository.save(question);
         return question;

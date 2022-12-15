@@ -2,6 +2,7 @@ package spring.board.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -13,8 +14,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import spring.board.security.CustomUserDetailImpl;
-
-import static org.springframework.security.config.Customizer.withDefaults;
+import spring.board.security.SimpleCorsFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -33,18 +33,24 @@ public class SecurityConfig {
                 .and().build();
     }
 
+    @Bean
+    public SimpleCorsFilter corsFilter() {
+        return new SimpleCorsFilter();
+    }
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.csrf().disable()
+        http.httpBasic().disable().csrf().disable()
                 .authorizeHttpRequests((authorizeHttpRequests) ->
                         authorizeHttpRequests
-                                .requestMatchers("/image/**", "/login", "/logout").permitAll()
+                                .requestMatchers(HttpMethod.GET,"/image/**", "/login", "/logout").permitAll()
                                 .requestMatchers("/answer/**").hasRole("ADMIN")
                                 .requestMatchers("/question/**").hasRole("USER")
-                ).formLogin(withDefaults())
-                .logout().logoutSuccessUrl("/login") // 로그아웃 성공 후 이동페이지
-                .deleteCookies("JSESSIONID", "remember-me"); // 로그아웃 후 쿠키 삭제
+                ).formLogin(form -> form.loginPage("/login").permitAll()
+                        .defaultSuccessUrl("/question/list", true)
+                        .loginProcessingUrl("/login").defaultSuccessUrl("/question/list", true))
+                .logout(logout -> logout.deleteCookies("JSESSIONID", "remember-me") // 로그아웃 후 쿠키 삭제
+                        .logoutUrl("/logout").logoutSuccessUrl("/login")); // 로그아웃 성공 후 이동페이지
 //.httpBasic(withDefaults())
         return http.build();
     }

@@ -1,5 +1,6 @@
 package spring.board.config;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -7,24 +8,25 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import spring.board.security.CustomUserDetailImpl;
-import spring.board.security.SimpleCorsFilter;
+import spring.board.security.jwt.JwtAuthenticationFilter;
+import spring.board.security.jwt.TokenProvider;
 
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class SecurityConfig {
 
     private final CustomUserDetailImpl customUserDetail;
-
-    public SecurityConfig(CustomUserDetailImpl customUserDetail) {
-        this.customUserDetail = customUserDetail;
-    }
+    private final TokenProvider jwtProvider;
 
     @Bean
     public AuthenticationManager authenticationManager(HttpSecurity http) throws Exception {
@@ -33,24 +35,25 @@ public class SecurityConfig {
                 .and().build();
     }
 
-    @Bean
-    public SimpleCorsFilter corsFilter() {
-        return new SimpleCorsFilter();
-    }
-
+//    @Bean
+//    public SimpleCorsFilter corsFilter() {
+//        return new SimpleCorsFilter();
+//    }
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.httpBasic().disable().csrf().disable()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .authorizeHttpRequests((authorizeHttpRequests) ->
                         authorizeHttpRequests
-                                .requestMatchers(HttpMethod.GET,"/image/**", "/login", "/logout").permitAll()
+                                .requestMatchers(HttpMethod.GET,"/image/**", "/api/login", "/logout").permitAll()
                                 .requestMatchers("/answer/**").hasRole("ADMIN")
-                                .requestMatchers("/question/**").hasRole("USER")
-                ).formLogin(form -> form.loginPage("/login").permitAll()
-                        .defaultSuccessUrl("/question/list", true)
-                        .loginProcessingUrl("/login").defaultSuccessUrl("/question/list", true))
-                .logout(logout -> logout.deleteCookies("JSESSIONID", "remember-me") // 로그아웃 후 쿠키 삭제
-                        .logoutUrl("/logout").logoutSuccessUrl("/login")); // 로그아웃 성공 후 이동페이지
+                                .requestMatchers("/question/**").hasRole("USER"))
+//                ).formLogin(form -> form.loginPage("/api/login").permitAll()
+//                        .defaultSuccessUrl("/question/list", true)
+//                        .loginProcessingUrl("/api/login").defaultSuccessUrl("/question/list", true))
+//                .logout(logout -> logout.deleteCookies("JSESSIONID", "remember-me") // 로그아웃 후 쿠키 삭제
+//                        .logoutUrl("/api/logout").logoutSuccessUrl("/api/login")) // 로그아웃 성공 후 이동페이지
+                .addFilterBefore(new JwtAuthenticationFilter(jwtProvider), UsernamePasswordAuthenticationFilter.class); // set jwt filter
 //.httpBasic(withDefaults())
         return http.build();
     }

@@ -1,23 +1,15 @@
 package spring.board.web;
 
-import jakarta.servlet.http.Cookie;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import spring.board.domain.Users;
-import spring.board.repository.UserRepository;
-import spring.board.security.CustomUserDetailImpl;
-import spring.board.security.UserDetailsVO;
-import spring.board.security.jwt.TokenProvider;
-import spring.board.security.userResponseDto;
-
-import java.util.ArrayList;
-import java.util.List;
+import spring.board.security.TokenRequestDto;
+import spring.board.security.UserResponseDto;
+import spring.board.security.UserTokenDto;
+import spring.board.security.jwt.AuthService;
+import spring.board.service.UserService;
 
 @Slf4j
 @RestController
@@ -25,34 +17,25 @@ import java.util.List;
 @RequestMapping("/api")
 public class LoginController {
 
-    private final AuthenticationManager authenticationManager;
-    private final CustomUserDetailImpl customUserDetail;
-    private final UserRepository repository;
-    private final TokenProvider tokenProvider;
+    private final AuthService authService;
+    private final UserService userService;
 
-    @PostMapping("/login")
-    public userResponseDto login(@RequestBody userResponseDto user, HttpServletResponse response) {
-        Users member = repository.findByEmail(user.getEmail()).get();
-//        if (!passwordEncoder.matches(user.getPassword(), member.getPassword())) {
-//            throw new IllegalArgumentException("잘못된 비밀번호입니다.");
-//        }
-        log.info("member={}", member.getEmail());
-        UserDetailsVO userDetailsVO = new UserDetailsVO(member);
-        List<String> roles = new ArrayList<>();
-        userDetailsVO.getAuthorities().iterator().forEachRemaining(role -> {
-            roles.add(String.valueOf(role));
-        });
+    @GetMapping("/user/{email}")
+    public ResponseEntity<UserResponseDto> getUser(@PathVariable String email) {
+        return new ResponseEntity<UserResponseDto>(userService.findUserByEmail(email), HttpStatus.OK);
+    }
 
-        String token = tokenProvider.createToken(userDetailsVO.getUsername(), roles);
-        response.setHeader("X-AUTH-TOKEN", token);
+    @PostMapping("/join")
+    public ResponseEntity<UserTokenDto> login(@ModelAttribute UserResponseDto user) {
+        log.info("login start");
+        UserTokenDto login = authService.login(user);
+        log.info("login token={}", login);
+        return new ResponseEntity<>(login, HttpStatus.OK);
+    }
 
-        Cookie cookie = new Cookie("X-AUTH-TOKEN", token);
-        cookie.setPath("/");
-        cookie.setHttpOnly(true);
-        cookie.setSecure(true);
-        response.addCookie(cookie);
-
-        return user;
+    @PostMapping("/reissue")
+    public ResponseEntity<UserTokenDto> reissue(@RequestBody TokenRequestDto tokenRequestDto) {
+        return ResponseEntity.ok(authService.reissue(tokenRequestDto));
     }
 
 //    @PostMapping("/login")
@@ -63,9 +46,9 @@ public class LoginController {
 //        return ResponseEntity.ok(tokenDto);
 //    }
 
-    @GetMapping(value = "/logout")
-    public String logoutPage(HttpServletRequest request, HttpServletResponse response) {
-        new SecurityContextLogoutHandler().logout(request, response, SecurityContextHolder.getContext().getAuthentication());
-        return "redirect:/login";
-    }
+//    @GetMapping(value = "/logout")
+//    public String logoutPage(HttpServletRequest request, HttpServletResponse response) {
+//        new SecurityContextLogoutHandler().logout(request, response, SecurityContextHolder.getContext().getAuthentication());
+//        return "redirect:/login";
+//    }
 }

@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import spring.board.domain.Question;
 import spring.board.domain.Users;
 import spring.board.repository.UserRepository;
+import spring.board.security.UserDetailsVO;
 import spring.board.service.QuestionService;
 
 import java.util.List;
@@ -23,6 +24,14 @@ public class QuestionController {
 
     private final QuestionService questionService;
     private final UserRepository userRepository;
+
+    @GetMapping("/user")
+    public ResponseEntity<Users> user(Authentication auth) {
+        Users user = ((UserDetailsVO) auth.getPrincipal()).getUser();
+//        Users printUser = userRepository.findByEmail(user.getEmail()).get();
+
+        return new ResponseEntity<Users>(user, HttpStatus.OK);
+    }
 
     @GetMapping("/list")
     public ResponseEntity<Page<Question>> showList(Pageable pageable) {

@@ -8,10 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import spring.board.domain.Users;
 import spring.board.repository.UserRepository;
 import spring.board.security.CustomUserDetailImpl;
@@ -25,6 +22,7 @@ import java.util.List;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
+@RequestMapping("/api")
 public class LoginController {
 
     private final AuthenticationManager authenticationManager;
@@ -32,7 +30,7 @@ public class LoginController {
     private final UserRepository repository;
     private final TokenProvider tokenProvider;
 
-    @PostMapping("/api/login")
+    @PostMapping("/login")
     public userResponseDto login(@RequestBody userResponseDto user, HttpServletResponse response) {
         Users member = repository.findByEmail(user.getEmail()).get();
 //        if (!passwordEncoder.matches(user.getPassword(), member.getPassword())) {

@@ -8,17 +8,16 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import spring.board.security.CustomUserDetailImpl;
-import spring.board.security.jwt.JwtAuthenticationFilter;
 import spring.board.security.jwt.TokenProvider;
+
+import static org.springframework.security.config.Customizer.withDefaults;
 
 @Configuration
 @EnableWebSecurity
@@ -41,20 +40,20 @@ public class SecurityConfig {
 //    }
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.httpBasic().disable().csrf().disable()
-                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
+        http.csrf().disable()
+//                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .authorizeHttpRequests((authorizeHttpRequests) ->
                         authorizeHttpRequests
-                                .requestMatchers(HttpMethod.GET,"/image/**", "/api/login", "/logout").permitAll()
+                                .requestMatchers(HttpMethod.GET,"/image/**", "/api/login", "/logout", "/api").permitAll()
                                 .requestMatchers("/answer/**").hasRole("ADMIN")
-                                .requestMatchers("/question/**").hasRole("USER"))
+                                .requestMatchers("/question/**").hasRole("USER")).httpBasic(withDefaults());
 //                ).formLogin(form -> form.loginPage("/api/login").permitAll()
 //                        .defaultSuccessUrl("/question/list", true)
 //                        .loginProcessingUrl("/api/login").defaultSuccessUrl("/question/list", true))
 //                .logout(logout -> logout.deleteCookies("JSESSIONID", "remember-me") // 로그아웃 후 쿠키 삭제
 //                        .logoutUrl("/api/logout").logoutSuccessUrl("/api/login")) // 로그아웃 성공 후 이동페이지
-                .addFilterBefore(new JwtAuthenticationFilter(jwtProvider), UsernamePasswordAuthenticationFilter.class); // set jwt filter
-//.httpBasic(withDefaults())
+//                .addFilterBefore(new JwtAuthenticationFilter(jwtProvider), UsernamePasswordAuthenticationFilter.class); // set jwt filter
+//.httpBasic().disable()
         return http.build();
     }
 

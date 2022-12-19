@@ -25,7 +25,7 @@ public class LoginController {
         return new ResponseEntity<UserResponseDto>(userService.findUserByEmail(email), HttpStatus.OK);
     }
 
-    @PostMapping("/join")
+    @PostMapping("/login")
     public ResponseEntity<UserTokenDto> login(@ModelAttribute UserResponseDto user) {
         log.info("login start");
         UserTokenDto login = authService.login(user);

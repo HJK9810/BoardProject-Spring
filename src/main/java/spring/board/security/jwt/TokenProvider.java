@@ -11,6 +11,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
+import spring.board.security.UserDetailsVO;
 import spring.board.security.UserTokenDto;
 
 import java.security.Key;
@@ -37,7 +38,7 @@ public class TokenProvider {
         this.key = Keys.hmacShaKeyFor(keyBytes);
     }
 
-    public UserTokenDto generateTokenDto(Authentication authentication) {
+    public UserTokenDto generateTokenDto(UserDetailsVO authentication) {
         // 권한들 가져오기
         String authorities = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
@@ -48,7 +49,7 @@ public class TokenProvider {
         // Access Token 생성
         Date accessTokenExpiresIn = new Date(now + ACCESS_TOKEN_EXPIRE_TIME);
         String accessToken = builder()
-                .setSubject(authentication.getName())       // payload "sub": "name"
+                .setSubject(authentication.getUsername())       // payload "sub": "name"
                 .claim(AUTHORITIES_KEY, authorities)        // payload "auth": "ROLE_USER"
                 .setExpiration(accessTokenExpiresIn)        // payload "exp": 1516239022 (예시)
                 .signWith(SignatureAlgorithm.HS512, key)    // header "alg": "HS512"

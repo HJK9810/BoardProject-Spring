@@ -3,7 +3,6 @@ package spring.board.config;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -52,7 +51,7 @@ public class SecurityConfig {
                 // 로그인, 회원가입 API 는 토큰이 없는 상태에서 요청이 들어오기 때문에 permitAll 설정
                 .and().authorizeHttpRequests((authorizeHttpRequests) ->
                         authorizeHttpRequests
-                                .requestMatchers(HttpMethod.GET,"/image/**", "/api/**").permitAll()
+                                .requestMatchers("/image/**", "/api/**").permitAll()
                                 .requestMatchers("/answer/**").hasRole("ADMIN")
                                 .requestMatchers("/question/**").hasRole("USER"))
                 // JwtFilter 를 addFilterBefore 로 등록했던 JwtSecurityConfig 클래스를 적용

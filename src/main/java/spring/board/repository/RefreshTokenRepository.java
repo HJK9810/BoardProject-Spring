@@ -1,7 +1,7 @@
 package spring.board.repository;
 
 import org.springframework.stereotype.Repository;
-import spring.board.security.jwt.RefreshToken;
+import spring.board.web.dto.RefreshToken;
 
 import java.util.HashMap;
 import java.util.Map;

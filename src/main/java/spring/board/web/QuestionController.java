@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import spring.board.domain.Question;
 import spring.board.repository.UserRepository;
 import spring.board.service.QuestionService;
+import spring.board.web.dto.QuestionForm;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -50,7 +51,6 @@ public class QuestionController {
 
     @PostMapping("/add")
     public ResponseEntity<Question> addQuestion(@ModelAttribute QuestionForm form, Authentication auth) {
-        log.info("form={}", form);
         Question addQuestion = questionService.addQuestion(form, auth.getName());
 
         return new ResponseEntity<Question>(addQuestion, HttpStatus.OK);

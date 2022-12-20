@@ -1,6 +1,5 @@
 package spring.board.security;
 
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -11,7 +10,6 @@ import spring.board.domain.Users;
 import java.util.ArrayList;
 import java.util.Collection;
 
-@Getter
 @RequiredArgsConstructor
 public class UserDetailsVO implements UserDetails {
 

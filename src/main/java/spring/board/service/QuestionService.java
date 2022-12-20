@@ -3,7 +3,7 @@ package spring.board.service;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import spring.board.domain.Question;
-import spring.board.web.QuestionForm;
+import spring.board.web.dto.QuestionForm;
 
 import java.util.List;
 

@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import spring.board.repository.RefreshTokenRepository;
-import spring.board.security.UserResponseDto;
+import spring.board.web.dto.UserResponseDto;
 
 @Service
 @RequiredArgsConstructor

@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import spring.board.domain.Answer;
 import spring.board.service.AnswerService;
 import spring.board.service.QuestionService;
+import spring.board.web.dto.AnswerForm;
 
 import java.util.List;
 
@@ -29,8 +30,6 @@ public class AnswerController {
 
     @PostMapping("/add/{questionId}")
     public ResponseEntity<Answer> addAnswer(@PathVariable Long questionId, @RequestBody AnswerForm form) {
-        log.info("form={}", form);
-        log.info("id={}", questionId);
         Answer addAnswer = answerService.addAnswer(questionId, form);
 
         return new ResponseEntity<Answer>(addAnswer, HttpStatus.OK);

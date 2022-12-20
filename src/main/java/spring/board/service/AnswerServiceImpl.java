@@ -7,7 +7,7 @@ import spring.board.domain.Answer;
 import spring.board.domain.Question;
 import spring.board.repository.AnswerRepository;
 import spring.board.repository.QuestionRepository;
-import spring.board.web.AnswerForm;
+import spring.board.web.dto.AnswerForm;
 
 import java.util.List;
 
@@ -18,11 +18,6 @@ public class AnswerServiceImpl implements AnswerService {
 
     private final AnswerRepository answerRepository;
     private final QuestionRepository questionRepository;
-
-    @Override
-    public List<Answer> answerList(Long id) {
-        return answerRepository.findAllByQuestion_Id(id);
-    }
 
     @Override
     public Answer addAnswer(Long questionId, AnswerForm form) {

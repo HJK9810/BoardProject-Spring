@@ -8,7 +8,7 @@ import spring.board.domain.Question;
 import spring.board.file.FileStore;
 import spring.board.repository.QuestionRepository;
 import spring.board.repository.UserRepository;
-import spring.board.web.QuestionForm;
+import spring.board.web.dto.QuestionForm;
 
 import java.util.List;
 
@@ -27,7 +27,7 @@ public class QuestionServiceImpl implements QuestionService{
 
     @Override
     public List<Question> findByUserId(String email) {
-        return null;
+        return questionRepository.findAllByUsers_Email(email);
     }
 
     @Override
@@ -53,7 +53,7 @@ public class QuestionServiceImpl implements QuestionService{
         questionRepository.findById(id).ifPresent(question -> {
             if (!question.getTitle().equals(form.getTitle())) question.setTitle(form.getTitle());
             if (!question.getContents().equals(form.getContents())) question.setContents(form.getContents());
-            if (!question.equals(images)) question.setImages(images);
+            if (!question.equals(images) || images.length() == 0) question.setImages(images);
 
             questionRepository.save(question);
         });

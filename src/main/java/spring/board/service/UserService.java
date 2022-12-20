@@ -1,6 +1,6 @@
 package spring.board.service;
 
-import spring.board.security.UserResponseDto;
+import spring.board.web.dto.UserResponseDto;
 
 public interface UserService {
     UserResponseDto findUserByEmail(String email);

@@ -19,4 +19,8 @@ public class RefreshTokenRepository {
     public RefreshToken findByKey(String key) {
         return store.get(key);
     }
+
+    public void deleteRefreshToken(String key) {
+        store.remove(key);
+    }
 }

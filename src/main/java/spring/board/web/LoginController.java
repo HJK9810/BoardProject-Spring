@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import spring.board.security.TokenRequestDto;
 import spring.board.security.UserResponseDto;
 import spring.board.security.UserTokenDto;
 import spring.board.security.jwt.AuthService;
@@ -31,7 +30,12 @@ public class LoginController {
     }
 
     @PostMapping("/reissue")
-    public ResponseEntity<UserTokenDto> reissue(@RequestBody TokenRequestDto tokenRequestDto) {
-        return ResponseEntity.ok(authService.reissue(tokenRequestDto));
+    public ResponseEntity<UserTokenDto> reissue(@RequestBody UserTokenDto tokenDto) {
+        return ResponseEntity.ok(authService.reissue(tokenDto));
+    }
+
+    @GetMapping("/logout")
+    public ResponseEntity<UserResponseDto> logout(@PathVariable String user) {
+        return ResponseEntity.ok(userService.logout(user));
     }
 }

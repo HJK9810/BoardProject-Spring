@@ -1,4 +1,4 @@
-package spring.board.security;
+package spring.board.web.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

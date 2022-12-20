@@ -1,4 +1,4 @@
-package spring.board.security.jwt;
+package spring.board.web.dto;
 
 import lombok.Builder;
 import lombok.Data;

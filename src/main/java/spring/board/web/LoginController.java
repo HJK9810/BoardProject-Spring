@@ -26,8 +26,9 @@ public class LoginController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<UserTokenDto> login(@ModelAttribute UserResponseDto user) {
+    public ResponseEntity<UserTokenDto> login(@RequestBody UserResponseDto user) {
         log.info("login start");
+        log.info("user={}", user);
         UserTokenDto login = authService.login(user);
         log.info("login token={}", login);
         return new ResponseEntity<>(login, HttpStatus.OK);
@@ -37,18 +38,4 @@ public class LoginController {
     public ResponseEntity<UserTokenDto> reissue(@RequestBody TokenRequestDto tokenRequestDto) {
         return ResponseEntity.ok(authService.reissue(tokenRequestDto));
     }
-
-//    @PostMapping("/login")
-//    public ResponseEntity<UserTokenDto> login(@RequestBody userResponseDto requestDto) {
-//        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(requestDto.getEmail(), requestDto.getPassword());
-//        Authentication authentication = managerBuilder.getObject().authenticate(authenticationToken);
-//        UserTokenDto tokenDto = tokenProvider.createToken(authentication).login(requestDto);
-//        return ResponseEntity.ok(tokenDto);
-//    }
-
-//    @GetMapping(value = "/logout")
-//    public String logoutPage(HttpServletRequest request, HttpServletResponse response) {
-//        new SecurityContextLogoutHandler().logout(request, response, SecurityContextHolder.getContext().getAuthentication());
-//        return "redirect:/login";
-//    }
 }

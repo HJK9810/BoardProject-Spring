@@ -28,13 +28,15 @@ public class QuestionController {
     @GetMapping("/user")
     public ResponseEntity<Users> user(Authentication auth) {
         Users user = ((UserDetailsVO) auth.getPrincipal()).getUser();
-//        Users printUser = userRepository.findByEmail(user.getEmail()).get();
+        Users printUser = userRepository.findByEmail(user.getEmail()).get();
 
+        log.info("token={}", ((UserDetailsVO) auth.getPrincipal()).getUsername());
         return new ResponseEntity<Users>(user, HttpStatus.OK);
     }
 
     @GetMapping("/list")
-    public ResponseEntity<Page<Question>> showList(Pageable pageable) {
+    public ResponseEntity<Page<Question>> showList(Pageable pageable, Authentication auth) {
+        log.info("auth={}", auth.getPrincipal());
         Page<Question> list = questionService.findList(pageable);
 
         return new ResponseEntity<Page<Question>>(list, HttpStatus.OK);
@@ -42,10 +44,9 @@ public class QuestionController {
 
     @GetMapping("/list/{userid}")
     public ResponseEntity<List<Question>> showByUser(@PathVariable String userid, Authentication auth) {
-        Users user = questionService.changeUser(auth.getPrincipal());
+        Users user = questionService.changeUser((UserDetailsVO) auth.getPrincipal());
 
         if (!user.getEmail().equals(userid)) return null;
-
         List<Question> list;
         if (userRepository.existsByEmail(userid)) list = questionService.findByUserId(user.getEmail());
         else list = null;
@@ -54,9 +55,8 @@ public class QuestionController {
     }
 
     @GetMapping("/viewOne/{id}")
-    public ResponseEntity<Question> viewOne(@PathVariable Long id, Authentication auth) {
-        Users user = questionService.changeUser(auth.getPrincipal());
-        Question question = questionService.viewOne(id, user);
+    public ResponseEntity<Question> viewOne(@PathVariable Long id) {
+        Question question = questionService.viewOne(id);
 
         return new ResponseEntity<Question>(question, HttpStatus.OK);
     }
@@ -64,16 +64,14 @@ public class QuestionController {
     @PostMapping("/add")
     public ResponseEntity<Question> addQuestion(@ModelAttribute QuestionForm form, Authentication auth) {
         log.info("form={}", form);
-        Users user = questionService.changeUser(auth.getPrincipal());
-        Question addQuestion = questionService.addQuestion(form, user);
+        Question addQuestion = questionService.addQuestion(form, ((UserDetailsVO) auth.getPrincipal()).getUsername());
 
         return new ResponseEntity<Question>(addQuestion, HttpStatus.OK);
     }
 
     @GetMapping ("/edit/{id}")
-    public ResponseEntity<Question> editOne(@PathVariable Long id, Authentication auth) {
-        Users user = questionService.changeUser(auth.getPrincipal());
-        return new ResponseEntity<>(questionService.viewOne(id, user), HttpStatus.OK);
+    public ResponseEntity<Question> editOne(@PathVariable Long id) {
+        return new ResponseEntity<>(questionService.viewOne(id), HttpStatus.OK);
     }
 
     @PostMapping("/edit/{id}")

@@ -9,11 +9,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import spring.board.domain.Question;
-import spring.board.domain.Users;
 import spring.board.repository.UserRepository;
-import spring.board.security.UserDetailsVO;
 import spring.board.service.QuestionService;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
@@ -25,18 +24,8 @@ public class QuestionController {
     private final QuestionService questionService;
     private final UserRepository userRepository;
 
-    @GetMapping("/user")
-    public ResponseEntity<Users> user(Authentication auth) {
-        Users user = ((UserDetailsVO) auth.getPrincipal()).getUser();
-        Users printUser = userRepository.findByEmail(user.getEmail()).get();
-
-        log.info("token={}", ((UserDetailsVO) auth.getPrincipal()).getUsername());
-        return new ResponseEntity<Users>(user, HttpStatus.OK);
-    }
-
     @GetMapping("/list")
     public ResponseEntity<Page<Question>> showList(Pageable pageable, Authentication auth) {
-        log.info("auth={}", auth.getPrincipal());
         Page<Question> list = questionService.findList(pageable);
 
         return new ResponseEntity<Page<Question>>(list, HttpStatus.OK);
@@ -44,14 +33,12 @@ public class QuestionController {
 
     @GetMapping("/list/{userid}")
     public ResponseEntity<List<Question>> showByUser(@PathVariable String userid, Authentication auth) {
-        Users user = questionService.changeUser((UserDetailsVO) auth.getPrincipal());
+        String email = auth.getName();
 
-        if (!user.getEmail().equals(userid)) return null;
-        List<Question> list;
-        if (userRepository.existsByEmail(userid)) list = questionService.findByUserId(user.getEmail());
-        else list = null;
+        if (!email.equals(userid)) return null;
 
-        return new ResponseEntity<List<Question>>(list, HttpStatus.OK);
+        if (userRepository.existsByEmail(userid)) return new ResponseEntity<List<Question>>(questionService.findByUserId(email), HttpStatus.OK);
+        else return new ResponseEntity<List<Question>>(new ArrayList<>(), HttpStatus.OK);
     }
 
     @GetMapping("/viewOne/{id}")
@@ -64,7 +51,7 @@ public class QuestionController {
     @PostMapping("/add")
     public ResponseEntity<Question> addQuestion(@ModelAttribute QuestionForm form, Authentication auth) {
         log.info("form={}", form);
-        Question addQuestion = questionService.addQuestion(form, ((UserDetailsVO) auth.getPrincipal()).getUsername());
+        Question addQuestion = questionService.addQuestion(form, auth.getName());
 
         return new ResponseEntity<Question>(addQuestion, HttpStatus.OK);
     }

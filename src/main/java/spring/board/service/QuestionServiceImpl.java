@@ -5,12 +5,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import spring.board.domain.Question;
-import spring.board.domain.Users;
 import spring.board.file.FileStore;
 import spring.board.repository.QuestionRepository;
 import spring.board.repository.UserRepository;
-import spring.board.security.SecurityUtil;
-import spring.board.security.UserDetailsVO;
 import spring.board.web.QuestionForm;
 
 import java.util.List;
@@ -22,12 +19,6 @@ public class QuestionServiceImpl implements QuestionService{
     private final QuestionRepository questionRepository;
     private final FileStore fileStore;
     private final UserRepository userRepository;
-    private final SecurityUtil securityUtil;
-
-    @Override
-    public Users changeUser(UserDetailsVO detailsVO) {
-        return userRepository.findByEmail(detailsVO.getUsername()).get();
-    }
 
     @Override
     public Page<Question> findList(Pageable pageable) {
@@ -47,10 +38,11 @@ public class QuestionServiceImpl implements QuestionService{
     @Override
     public Question addQuestion(QuestionForm form, String email) {
         String images = fileStore.storeFiles(form.getImages());
+
         Question question = new Question(form.getTitle(), form.getContents(), images);
         question.setUsers(userRepository.findByEmail(email).get());
-
         questionRepository.save(question);
+
         return question;
     }
 

@@ -3,7 +3,6 @@ package spring.board.security.jwt;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,7 +18,7 @@ import spring.board.security.UserTokenDto;
 @Service
 @RequiredArgsConstructor
 public class AuthService {
-    private final AuthenticationManagerBuilder authenticationManagerBuilder;
+
     private final TokenProvider tokenProvider;
     private final RefreshTokenRepository refreshTokenRepository;
     private final UserRepository userRepository;
@@ -36,12 +35,11 @@ public class AuthService {
         // 2. 실제로 검증 (사용자 비밀번호 체크) 이 이루어지는 부분
         //    authenticate 메서드가 실행이 될 때 CustomUserDetailsService 에서 만들었던 loadUserByUsername 메서드가 실행됨
         UserDetailsVO authentication = new UserDetailsVO(user);
-//        Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
         log.info("auth check={}", authentication);
 
         // 3. 인증 정보를 기반으로 JWT 토큰 생성
         UserTokenDto tokenDto = tokenProvider.generateTokenDto(authentication);
-        log.info("create jwt token={}", tokenDto);
+        log.info("create jwt token={}", tokenDto.getAccessToken());
 
         // 4. RefreshToken 저장
         RefreshToken refreshToken = RefreshToken.builder()

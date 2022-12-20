@@ -11,10 +11,7 @@ import java.util.Optional;
 @Repository
 public interface QuestionRepository extends JpaRepository<Question, Long> {
 
-//    List<Question> findAll();
     Page<Question> findAll(Pageable pageable);
 
     Optional<Question> findById(Long id);
-
-//    Optional<Question> findByUserId(Long id);
 }

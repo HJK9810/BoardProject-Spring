@@ -27,11 +27,7 @@ public class LoginController {
 
     @PostMapping("/login")
     public ResponseEntity<UserTokenDto> login(@RequestBody UserResponseDto user) {
-        log.info("login start");
-        log.info("user={}", user);
-        UserTokenDto login = authService.login(user);
-        log.info("login token={}", login);
-        return new ResponseEntity<>(login, HttpStatus.OK);
+        return new ResponseEntity<>(authService.login(user), HttpStatus.OK);
     }
 
     @PostMapping("/reissue")

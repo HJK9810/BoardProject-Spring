@@ -1,11 +1,13 @@
 package spring.board.repository;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
 import spring.board.web.dto.RefreshToken;
 
 import java.util.HashMap;
 import java.util.Map;
 
+@Slf4j
 @Repository
 public class RefreshTokenRepository {
 
@@ -21,6 +23,10 @@ public class RefreshTokenRepository {
     }
 
     public void deleteRefreshToken(String key) {
-        store.remove(key);
+        try {
+            store.remove(key);
+        } catch (Exception e) {
+            log.error("WAS has no token");
+        }
     }
 }

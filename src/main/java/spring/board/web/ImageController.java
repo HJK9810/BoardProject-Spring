@@ -26,6 +26,6 @@ public class ImageController {
         byte[] imageByteArray = IOUtils.toByteArray(imageStream);
         imageStream.close();
 
-        return new ResponseEntity<byte[]>(imageByteArray, HttpStatus.OK);
+        return new ResponseEntity<>(imageByteArray, HttpStatus.OK);
     }
 }

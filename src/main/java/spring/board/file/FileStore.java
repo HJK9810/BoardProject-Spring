@@ -22,7 +22,7 @@ public class FileStore {
     }
 
     public String storeFiles(List<MultipartFile> multipartFiles) {
-        StringBuffer storeFileResult = new StringBuffer();
+        StringBuilder storeFileResult = new StringBuilder();
 
         if (multipartFiles.isEmpty()) return "";
 

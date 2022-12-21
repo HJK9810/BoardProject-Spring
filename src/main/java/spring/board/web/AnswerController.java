@@ -25,13 +25,13 @@ public class AnswerController {
     public ResponseEntity<List<Answer>> showAnswers(@PathVariable Long questionId) {
         List<Answer> list = questionService.viewOne(questionId).getAnswers();
 
-        return new ResponseEntity<List<Answer>>(list, HttpStatus.OK);
+        return new ResponseEntity<>(list, HttpStatus.OK);
     }
 
     @PostMapping("/add/{questionId}")
     public ResponseEntity<Answer> addAnswer(@PathVariable Long questionId, @RequestBody AnswerForm form) {
         Answer addAnswer = answerService.addAnswer(questionId, form);
 
-        return new ResponseEntity<Answer>(addAnswer, HttpStatus.OK);
+        return new ResponseEntity<>(addAnswer, HttpStatus.OK);
     }
 }

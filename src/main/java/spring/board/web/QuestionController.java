@@ -24,7 +24,7 @@ public class QuestionController {
     private final UserRepository userRepository;
 
     @GetMapping("/list")
-    public ResponseEntity<Page<Question>> showList(Pageable pageable, Authentication auth) {
+    public ResponseEntity<Page<Question>> showList(Pageable pageable) {
         return new ResponseEntity<>(questionService.findList(pageable), HttpStatus.OK);
     }
 

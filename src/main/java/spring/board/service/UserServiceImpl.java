@@ -21,8 +21,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public UserResponseDto logout(String emil) {
-        repository.deleteRefreshToken(emil);
+    public UserResponseDto logout(String email) {
+        repository.deleteRefreshToken(email);
         return new UserResponseDto();
     }
 }

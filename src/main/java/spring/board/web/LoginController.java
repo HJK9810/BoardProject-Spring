@@ -2,13 +2,12 @@ package spring.board.web;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import spring.board.web.dto.UserResponseDto;
-import spring.board.web.dto.UserTokenDto;
 import spring.board.security.jwt.AuthService;
 import spring.board.service.UserService;
+import spring.board.web.dto.UserResponseDto;
+import spring.board.web.dto.UserTokenDto;
 
 @Slf4j
 @RestController
@@ -21,12 +20,12 @@ public class LoginController {
 
     @GetMapping("/user/{email}")
     public ResponseEntity<UserResponseDto> getUser(@PathVariable String email) {
-        return new ResponseEntity<UserResponseDto>(userService.findUserByEmail(email), HttpStatus.OK);
+        return ResponseEntity.ok(userService.findUserByEmail(email));
     }
 
     @PostMapping("/login")
     public ResponseEntity<UserTokenDto> login(@RequestBody UserResponseDto user) {
-        return new ResponseEntity<>(authService.login(user), HttpStatus.OK);
+        return ResponseEntity.ok(authService.login(user));
     }
 
     @PostMapping("/reissue")
@@ -34,7 +33,7 @@ public class LoginController {
         return ResponseEntity.ok(authService.reissue(tokenDto));
     }
 
-    @GetMapping("/logout")
+    @GetMapping("/logout/{user}")
     public ResponseEntity<UserResponseDto> logout(@PathVariable String user) {
         return ResponseEntity.ok(userService.logout(user));
     }

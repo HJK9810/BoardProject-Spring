@@ -1,7 +1,6 @@
 package spring.board.web;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -16,7 +15,6 @@ import spring.board.web.dto.QuestionForm;
 import java.util.ArrayList;
 import java.util.List;
 
-@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/question")
@@ -27,9 +25,7 @@ public class QuestionController {
 
     @GetMapping("/list")
     public ResponseEntity<Page<Question>> showList(Pageable pageable, Authentication auth) {
-        Page<Question> list = questionService.findList(pageable);
-
-        return new ResponseEntity<Page<Question>>(list, HttpStatus.OK);
+        return new ResponseEntity<>(questionService.findList(pageable), HttpStatus.OK);
     }
 
     @GetMapping("/list/{userid}")
@@ -38,34 +34,27 @@ public class QuestionController {
 
         if (!email.equals(userid)) return null;
 
-        if (userRepository.existsByEmail(userid)) return new ResponseEntity<List<Question>>(questionService.findByUserId(email), HttpStatus.OK);
-        else return new ResponseEntity<List<Question>>(new ArrayList<>(), HttpStatus.OK);
+        if (userRepository.existsByEmail(userid)) return new ResponseEntity<>(questionService.findByUserId(email), HttpStatus.OK);
+        else return new ResponseEntity<>(new ArrayList<>(), HttpStatus.OK);
     }
 
     @GetMapping("/viewOne/{id}")
     public ResponseEntity<Question> viewOne(@PathVariable Long id) {
-        Question question = questionService.viewOne(id);
-
-        return new ResponseEntity<Question>(question, HttpStatus.OK);
+        return new ResponseEntity<>(questionService.viewOne(id), HttpStatus.OK);
     }
 
     @PostMapping("/add")
     public ResponseEntity<Question> addQuestion(@ModelAttribute QuestionForm form, Authentication auth) {
-        Question addQuestion = questionService.addQuestion(form, auth.getName());
-
-        return new ResponseEntity<Question>(addQuestion, HttpStatus.OK);
+        return new ResponseEntity<>(questionService.addQuestion(form, auth.getName()), HttpStatus.OK);
     }
 
-    @GetMapping ("/edit/{id}")
+    @GetMapping("/edit/{id}")
     public ResponseEntity<Question> editOne(@PathVariable Long id) {
         return new ResponseEntity<>(questionService.viewOne(id), HttpStatus.OK);
     }
 
     @PostMapping("/edit/{id}")
     public ResponseEntity<Question> edit(@PathVariable Long id, @ModelAttribute QuestionForm form) {
-        log.info("form = {}", form);
-        Question updateQuestion = questionService.updateQuestion(id, form);
-
-        return new ResponseEntity<>(updateQuestion, HttpStatus.OK);
+        return new ResponseEntity<>(questionService.updateQuestion(id, form), HttpStatus.OK);
     }
 }

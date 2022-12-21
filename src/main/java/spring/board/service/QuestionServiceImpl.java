@@ -5,6 +5,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import spring.board.domain.Question;
+import spring.board.file.FileDelete;
 import spring.board.file.FileStore;
 import spring.board.repository.QuestionRepository;
 import spring.board.repository.UserRepository;
@@ -17,8 +18,9 @@ import java.util.List;
 public class QuestionServiceImpl implements QuestionService{
 
     private final QuestionRepository questionRepository;
-    private final FileStore fileStore;
     private final UserRepository userRepository;
+    private final FileStore fileStore;
+    private final FileDelete fileDelete;
 
     @Override
     public Page<Question> findList(Pageable pageable) {
@@ -53,7 +55,8 @@ public class QuestionServiceImpl implements QuestionService{
         questionRepository.findById(id).ifPresent(question -> {
             if (!question.getTitle().equals(form.getTitle())) question.setTitle(form.getTitle());
             if (!question.getContents().equals(form.getContents())) question.setContents(form.getContents());
-            if (!question.equals(images) || images.length() == 0) question.setImages(images);
+            fileDelete.deleteFile(question.getImages(), form.getSavedImages()); // delete not use
+            question.setImages(form.getSavedImages() + images);
 
             questionRepository.save(question);
         });

@@ -11,4 +11,5 @@ public class QuestionForm {
     private String title;
     private String contents;
     private List<MultipartFile> images;
+    private String savedImages;
 }

@@ -17,18 +17,22 @@ public class FileStore {
     @Value("${file.dir}")
     private String fileDir;
 
-    public String getFullPath(String filename) {
+    private String getFullPath(String filename) {
         return fileDir + filename;
     }
 
     public String storeFiles(List<MultipartFile> multipartFiles) {
         StringBuffer storeFileResult = new StringBuffer();
 
-        if (multipartFiles != null){
-            for (MultipartFile multipartFile : multipartFiles) {
-                if (!multipartFile.isEmpty()) storeFileResult.append(storeFile(multipartFile) + ",");
+        if (multipartFiles.isEmpty()) return "";
+
+        for (MultipartFile multipartFile : multipartFiles) {
+            if (!multipartFile.isEmpty()) {
+                String fileName = String.format("(%s)%s,", inputFileName(multipartFile.getOriginalFilename()), storeFile(multipartFile));
+                storeFileResult.append(fileName);
             }
         }
+
         return storeFileResult.toString();
     }
 
@@ -52,7 +56,10 @@ public class FileStore {
     }
 
     private String extractExt(String originalFilename) {
-        int pos = originalFilename.lastIndexOf(".");
-        return originalFilename.substring(pos + 1);
+        return originalFilename.substring(originalFilename.lastIndexOf(".") + 1);
+    }
+
+    private String inputFileName(String originalFilename) {
+        return originalFilename.substring(0, originalFilename.lastIndexOf("."));
     }
 }

@@ -50,7 +50,7 @@ public class TokenProvider {
         String accessToken = builder()
                 .setSubject(authentication.getUsername())   // payload "sub": username
                 .claim(AUTHORITIES_KEY, authorities)        // payload "auth": role
-                .setExpiration(accessTokenExpiresIn)        // payload "exp": 만료 시간(ms 단위)
+                .setExpiration(accessTokenExpiresIn)        // payload "exp": 만료 시간
                 .signWith(SignatureAlgorithm.HS512, key)    // header "alg": "HS512"
                 .compact();
 

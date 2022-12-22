@@ -31,11 +31,10 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         // CSRF 설정 Disable
-        http.csrf().disable()
+        http.httpBasic().disable().csrf().disable()
                 // exception handling 할 때 우리가 만든 클래스를 추가
-                .exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint)
-                .accessDeniedHandler(jwtAccessDeniedHandler).and()
-                .headers().frameOptions().sameOrigin()
+                .exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint).accessDeniedHandler(jwtAccessDeniedHandler)
+                .and().headers().frameOptions().sameOrigin()
                 // 시큐리티는 기본적으로 세션을 사용 but jwt not use session -> 세션 set Stateless
                 .and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and().authorizeHttpRequests((authorizeHttpRequests) ->

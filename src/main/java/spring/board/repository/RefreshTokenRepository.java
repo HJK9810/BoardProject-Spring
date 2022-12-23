@@ -26,7 +26,7 @@ public class RefreshTokenRepository {
         try {
             store.remove(key);
         } catch (Exception e) {
-            log.error("WAS has no token");
+            log.warn("WAS has no token");
         }
     }
 }

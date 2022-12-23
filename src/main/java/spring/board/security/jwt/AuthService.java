@@ -42,7 +42,7 @@ public class AuthService {
             RefreshToken refreshToken = RefreshToken.builder().key(authentication.getUsername()).value(tokenDto.getRefreshToken()).build();
             refreshTokenRepository.save(refreshToken);
         } catch (NullPointerException e) {
-            log.error("등록되지 않은 사용자입니다.");
+            log.warn("등록되지 않은 사용자입니다.");
         }
 
         // 토큰 발급

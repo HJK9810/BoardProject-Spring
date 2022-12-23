@@ -14,8 +14,6 @@ import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsUtils;
-import spring.board.security.jwt.JwtAccessDeniedHandler;
-import spring.board.security.jwt.JwtAuthenticationEntryPoint;
 import spring.board.security.jwt.JwtAuthenticationFilter;
 import spring.board.security.jwt.TokenProvider;
 
@@ -24,17 +22,13 @@ import spring.board.security.jwt.TokenProvider;
 @RequiredArgsConstructor
 public class SecurityConfig {
 
-    private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
-    private final JwtAccessDeniedHandler jwtAccessDeniedHandler;
     private final TokenProvider jwtProvider;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         // CSRF 설정 Disable
         http.httpBasic().disable().csrf().disable()
-                // exception handling 할 때 우리가 만든 클래스를 추가
-                .exceptionHandling().authenticationEntryPoint(jwtAuthenticationEntryPoint).accessDeniedHandler(jwtAccessDeniedHandler)
-                .and().headers().frameOptions().sameOrigin()
+                .headers().frameOptions().sameOrigin()
                 // 시큐리티는 기본적으로 세션을 사용 but jwt not use session -> 세션 set Stateless
                 .and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and().authorizeHttpRequests((authorizeHttpRequests) ->

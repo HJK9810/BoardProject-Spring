@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Component
@@ -17,23 +18,14 @@ public class FileStore {
     @Value("${file.dir}")
     private String fileDir;
 
-    private String getFullPath(String filename) {
-        return fileDir + filename;
-    }
-
     public String storeFiles(List<MultipartFile> multipartFiles) {
-        StringBuilder storeFileResult = new StringBuilder();
-
         if (multipartFiles.isEmpty()) return "";
 
-        for (MultipartFile multipartFile : multipartFiles) {
-            if (!multipartFile.isEmpty()) {
-                String fileName = String.format("(%s)%s,", inputFileName(multipartFile.getOriginalFilename()), storeFile(multipartFile));
-                storeFileResult.append(fileName);
-            }
-        }
-
-        return storeFileResult.toString();
+        return multipartFiles.stream()
+                .filter(multipartFile -> !multipartFile.isEmpty()) // check not null
+                .map(multipartFile -> // return string for "(input filename)storeFileName.fileType,"
+                        String.format("(%s)%s,", inputFileName(multipartFile.getOriginalFilename()), storeFile(multipartFile)))
+                .collect(Collectors.joining()); // join all strings
     }
 
     private String storeFile(MultipartFile multipartFile) {
@@ -41,7 +33,7 @@ public class FileStore {
 
         String storeFileName = createStoreFileName(multipartFile.getOriginalFilename());
         try {
-            multipartFile.transferTo(new File(getFullPath(storeFileName)));
+            multipartFile.transferTo(new File(fileDir + storeFileName));
         } catch (IOException e) {
             log.error("error={}", e.getMessage());
         }
@@ -60,6 +52,7 @@ public class FileStore {
     }
 
     private String inputFileName(String originalFilename) {
-        return originalFilename.substring(0, originalFilename.lastIndexOf("."));
+        if (!originalFilename.isEmpty()) return originalFilename.substring(0, originalFilename.lastIndexOf("."));
+        else return "no name";
     }
 }

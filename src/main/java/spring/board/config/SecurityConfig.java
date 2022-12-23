@@ -26,14 +26,13 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        // CSRF 설정 Disable
-        http.httpBasic().disable().csrf().disable()
+        http.httpBasic().disable().csrf().disable() // CSRF & http basic set Disable
                 .headers().frameOptions().sameOrigin()
                 // 시큐리티는 기본적으로 세션을 사용 but jwt not use session -> 세션 set Stateless
                 .and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and().authorizeHttpRequests((authorizeHttpRequests) ->
                         authorizeHttpRequests
-                                .requestMatchers(request -> CorsUtils.isPreFlightRequest(request)).permitAll() // for cors
+                                .requestMatchers(CorsUtils::isPreFlightRequest).permitAll() // for cors
                                 .requestMatchers("/image/**", "/api/**").permitAll() // show image & login url
                                 .requestMatchers("/answer/**").hasRole("ADMIN") // admin url
                                 .requestMatchers("/question/**").hasRole("USER")) // user url

@@ -35,7 +35,7 @@ public class FileStore {
         try {
             multipartFile.transferTo(new File(fileDir + storeFileName));
         } catch (IOException e) {
-            log.error("error={}", e.getMessage());
+            log.error("error={}", e.toString()); // print exception
         }
 
         return storeFileName;
@@ -48,11 +48,14 @@ public class FileStore {
     }
 
     private String extractExt(String originalFilename) {
-        return originalFilename.substring(originalFilename.lastIndexOf(".") + 1);
+        int pos = originalFilename.lastIndexOf(".");
+        if (pos == -1) return "";
+        else return originalFilename.substring(pos + 1);
     }
 
     private String inputFileName(String originalFilename) {
-        if (!originalFilename.isEmpty()) return originalFilename.substring(0, originalFilename.lastIndexOf("."));
-        else return "no name";
+        int pos = originalFilename.lastIndexOf(".");
+        if (pos == -1) return originalFilename;
+        else return originalFilename.substring(0, pos);
     }
 }

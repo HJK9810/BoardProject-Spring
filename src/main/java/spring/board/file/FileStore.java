@@ -19,7 +19,7 @@ public class FileStore {
     private String fileDir;
 
     public String storeFiles(List<MultipartFile> multipartFiles) {
-        if (multipartFiles.isEmpty()) return "";
+        if (multipartFiles == null) return "";
 
         return multipartFiles.stream()
                 .filter(multipartFile -> !multipartFile.isEmpty()) // check not null

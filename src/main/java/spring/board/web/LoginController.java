@@ -25,6 +25,7 @@ public class LoginController {
 
     @PostMapping("/login")
     public ResponseEntity<UserTokenDto> login(@RequestBody UserResponseDto user) {
+        log.info("사용자 {}가 로그인 하였습니다.", user.getEmail());
         return ResponseEntity.ok(authService.login(user));
     }
 
@@ -35,6 +36,7 @@ public class LoginController {
 
     @GetMapping("/logout/{user}")
     public ResponseEntity<UserResponseDto> logout(@PathVariable String user) {
+        log.info("사용자 {}가 로그아웃 하였습니다.", user);
         return ResponseEntity.ok(userService.logout(user));
     }
 }

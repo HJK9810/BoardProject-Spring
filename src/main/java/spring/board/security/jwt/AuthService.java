@@ -13,6 +13,8 @@ import spring.board.web.dto.RefreshToken;
 import spring.board.web.dto.UserResponseDto;
 import spring.board.web.dto.UserTokenDto;
 
+import java.util.Optional;
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -25,21 +27,25 @@ public class AuthService {
     @Transactional
     public UserTokenDto login(UserResponseDto userResponseDto) {
 
-        // 1. Login ID/PW 를 기반으로 AuthenticationToken 생성
-         Users user = userRepository.findByEmail(userResponseDto.getEmail()).get();
+        // Login ID/PW 를 기반으로 인증 체크
+        Optional<Users> userObject = userRepository.findByEmail(userResponseDto.getEmail());
+        UserDetailsVO authentication;
 
-        // 2. 실제로 검증 (사용자 비밀번호 체크) 이 이루어지는 부분
-        //    authenticate 메서드가 실행이 될 때 CustomUserDetailsService 에서 만들었던 loadUserByUsername 메서드가 실행됨
-        UserDetailsVO authentication = new UserDetailsVO(user);
+        authentication = userObject.map(UserDetailsVO::new).orElse(null);
 
-        // 3. 인증 정보를 기반으로 JWT 토큰 생성
-        UserTokenDto tokenDto = tokenProvider.generateTokenDto(authentication);
+        UserTokenDto tokenDto = null;
+        try {
+            // 인증 정보를 기반으로 JWT 토큰 생성
+            tokenDto = tokenProvider.generateTokenDto(authentication);
 
-        // 4. RefreshToken 저장
-        RefreshToken refreshToken = RefreshToken.builder().key(authentication.getUsername()).value(tokenDto.getRefreshToken()).build();
-        refreshTokenRepository.save(refreshToken);
+            // RefreshToken 저장
+            RefreshToken refreshToken = RefreshToken.builder().key(authentication.getUsername()).value(tokenDto.getRefreshToken()).build();
+            refreshTokenRepository.save(refreshToken);
+        } catch (NullPointerException e) {
+            log.error("등록되지 않은 사용자입니다.");
+        }
 
-        // 5. 토큰 발급
+        // 토큰 발급
         return tokenDto;
     }
 

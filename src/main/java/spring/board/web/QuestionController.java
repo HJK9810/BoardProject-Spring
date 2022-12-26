@@ -3,7 +3,6 @@ package spring.board.web;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -22,7 +21,7 @@ public class QuestionController {
 
     @GetMapping("/list")
     public ResponseEntity<Page<Question>> showList(Pageable pageable) {
-        return new ResponseEntity<>(questionService.findList(pageable), HttpStatus.OK);
+        return ResponseEntity.ok(questionService.findList(pageable));
     }
 
     @GetMapping("/list/{userid}")
@@ -31,27 +30,22 @@ public class QuestionController {
 
         if (!email.equals(userid)) return null;
 
-        if (userRepository.existsByEmail(userid)) return new ResponseEntity<>(questionService.findByUserId(email, pageable), HttpStatus.OK);
-        else return new ResponseEntity<>(null, HttpStatus.OK);
+        if (userRepository.existsByEmail(userid)) return ResponseEntity.ok(questionService.findByUserId(email, pageable));
+        else return ResponseEntity.ok(null);
     }
 
     @GetMapping("/viewOne/{id}")
     public ResponseEntity<Question> viewOne(@PathVariable Long id) {
-        return new ResponseEntity<>(questionService.viewOne(id), HttpStatus.OK);
+        return ResponseEntity.ok(questionService.viewOne(id));
     }
 
     @PostMapping("/add")
     public ResponseEntity<Question> addQuestion(@ModelAttribute QuestionForm form, Authentication auth) {
-        return new ResponseEntity<>(questionService.addQuestion(form, auth.getName()), HttpStatus.OK);
-    }
-
-    @GetMapping("/edit/{id}")
-    public ResponseEntity<Question> editOne(@PathVariable Long id) {
-        return new ResponseEntity<>(questionService.viewOne(id), HttpStatus.OK);
+        return ResponseEntity.ok(questionService.addQuestion(form, auth.getName()));
     }
 
     @PostMapping("/edit/{id}")
     public ResponseEntity<Question> edit(@PathVariable Long id, @ModelAttribute QuestionForm form) {
-        return new ResponseEntity<>(questionService.updateQuestion(id, form), HttpStatus.OK);
+        return ResponseEntity.ok(questionService.updateQuestion(id, form));
     }
 }

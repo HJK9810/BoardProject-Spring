@@ -31,6 +31,7 @@ public class LoginController {
 
     @PostMapping("/reissue")
     public ResponseEntity<UserTokenDto> reissue(@RequestBody UserTokenDto tokenDto) {
+        log.info("토큰을 갱신하겠습니다.");
         return ResponseEntity.ok(authService.reissue(tokenDto));
     }
 

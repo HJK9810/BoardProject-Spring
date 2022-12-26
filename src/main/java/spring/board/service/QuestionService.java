@@ -5,11 +5,9 @@ import org.springframework.data.domain.Pageable;
 import spring.board.domain.Question;
 import spring.board.web.dto.QuestionForm;
 
-import java.util.List;
-
 public interface QuestionService {
     Page<Question> findList(Pageable pageable);
-    List<Question> findByUserId(String email);
+    Page<Question> findByUserId(String email, Pageable pageable);
 
     Question viewOne(Long id);
 

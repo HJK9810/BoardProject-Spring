@@ -5,12 +5,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import spring.board.domain.Question;
-import spring.board.file.*;
+import spring.board.file.FileDelete;
+import spring.board.file.FileStore;
 import spring.board.repository.QuestionRepository;
 import spring.board.repository.UserRepository;
 import spring.board.web.dto.QuestionForm;
-
-import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -27,8 +26,8 @@ public class QuestionServiceImpl implements QuestionService{
     }
 
     @Override
-    public List<Question> findByUserId(String email) {
-        return questionRepository.findAllByUsers_Email(email);
+    public Page<Question> findByUserId(String email, Pageable pageable) {
+        return questionRepository.findAllByUsers_Email(email, pageable);
     }
 
     @Override

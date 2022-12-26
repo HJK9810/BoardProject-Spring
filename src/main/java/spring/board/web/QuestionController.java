@@ -12,9 +12,6 @@ import spring.board.repository.UserRepository;
 import spring.board.service.QuestionService;
 import spring.board.web.dto.QuestionForm;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/question")
@@ -29,13 +26,13 @@ public class QuestionController {
     }
 
     @GetMapping("/list/{userid}")
-    public ResponseEntity<List<Question>> showByUser(@PathVariable String userid, Authentication auth) {
+    public ResponseEntity<Page<Question>> showByUser(@PathVariable String userid, Pageable pageable, Authentication auth) {
         String email = auth.getName();
 
         if (!email.equals(userid)) return null;
 
-        if (userRepository.existsByEmail(userid)) return new ResponseEntity<>(questionService.findByUserId(email), HttpStatus.OK);
-        else return new ResponseEntity<>(new ArrayList<>(), HttpStatus.OK);
+        if (userRepository.existsByEmail(userid)) return new ResponseEntity<>(questionService.findByUserId(email, pageable), HttpStatus.OK);
+        else return new ResponseEntity<>(null, HttpStatus.OK);
     }
 
     @GetMapping("/viewOne/{id}")

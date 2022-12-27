@@ -32,6 +32,11 @@ public class AnswerServiceImpl implements AnswerService {
     }
 
     @Override
+    public Answer viewOne(Long id) {
+        return answerRepository.findById(id).get();
+    }
+
+    @Override
     public Answer updateAnswer(Long id, AnswerForm form) {
         answerRepository.findById(id).ifPresent(answer -> {
             if (!answer.getContents().equals(form.getContents())) answer.setContents(form.getContents());
@@ -41,14 +46,14 @@ public class AnswerServiceImpl implements AnswerService {
     }
 
     @Override
-    public Boolean deleteAnswer(Long id) {
-        Answer answer = answerRepository.findById(id).get();
-        Question question = answer.getQuestion();
+    public Boolean deleteAnswer(Long id, Long answerId) {
+        Question question = questionRepository.findById(id).get();
+        Answer answer = answerRepository.findById(answerId).get();
         answer.setQuestion(null);
         question.getAnswers().remove(answer);
-
-        answerRepository.deleteById(id);
         questionRepository.save(question);
+
+        answerRepository.delete(answer);
         return true;
     }
 }

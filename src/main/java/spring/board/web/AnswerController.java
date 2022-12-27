@@ -30,13 +30,18 @@ public class AnswerController {
         return ResponseEntity.ok(answerService.addAnswer(questionId, form));
     }
 
+    @GetMapping("/edit/{id}")
+    public ResponseEntity<Answer> editAnswerView(@PathVariable Long id) {
+        return ResponseEntity.ok(answerService.viewOne(id));
+    }
+
     @PostMapping("/edit/{id}")
     public ResponseEntity<Answer> editAnswer(@PathVariable Long id, @RequestBody AnswerForm form) {
         return ResponseEntity.ok(answerService.updateAnswer(id, form));
     }
 
     @DeleteMapping("/del/{id}")
-    public ResponseEntity<Boolean> delAnswer(@PathVariable Long id) {
-        return ResponseEntity.ok(answerService.deleteAnswer(id));
+    public ResponseEntity<Answer> delAnswer(@PathVariable Long id, @RequestParam("aId") Long answerId) {
+        return ResponseEntity.ok(new Answer(String.valueOf(answerService.deleteAnswer(id, answerId)), null));
     }
 }

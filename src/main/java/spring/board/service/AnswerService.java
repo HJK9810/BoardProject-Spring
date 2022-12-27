@@ -5,4 +5,7 @@ import spring.board.web.dto.AnswerForm;
 
 public interface AnswerService {
     Answer addAnswer(Long questionId, AnswerForm form);
+    Answer updateAnswer(Long id, AnswerForm form);
+
+    Boolean deleteAnswer(Long id);
 }

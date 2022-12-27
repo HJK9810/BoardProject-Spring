@@ -29,4 +29,14 @@ public class AnswerController {
     public ResponseEntity<Answer> addAnswer(@PathVariable Long questionId, @RequestBody AnswerForm form) {
         return ResponseEntity.ok(answerService.addAnswer(questionId, form));
     }
+
+    @PostMapping("/edit/{id}")
+    public ResponseEntity<Answer> editAnswer(@PathVariable Long id, @RequestBody AnswerForm form) {
+        return ResponseEntity.ok(answerService.updateAnswer(id, form));
+    }
+
+    @DeleteMapping("/del/{id}")
+    public ResponseEntity<Boolean> delAnswer(@PathVariable Long id) {
+        return ResponseEntity.ok(answerService.deleteAnswer(id));
+    }
 }

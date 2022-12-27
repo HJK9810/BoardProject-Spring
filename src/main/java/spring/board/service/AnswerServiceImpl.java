@@ -30,4 +30,25 @@ public class AnswerServiceImpl implements AnswerService {
         question.addAnswer(answer);
         return answer;
     }
+
+    @Override
+    public Answer updateAnswer(Long id, AnswerForm form) {
+        answerRepository.findById(id).ifPresent(answer -> {
+            if (!answer.getContents().equals(form.getContents())) answer.setContents(form.getContents());
+            answerRepository.save(answer);
+        });
+        return answerRepository.findById(id).get();
+    }
+
+    @Override
+    public Boolean deleteAnswer(Long id) {
+        Answer answer = answerRepository.findById(id).get();
+        Question question = answer.getQuestion();
+        answer.setQuestion(null);
+        question.getAnswers().remove(answer);
+
+        answerRepository.deleteById(id);
+        questionRepository.save(question);
+        return true;
+    }
 }

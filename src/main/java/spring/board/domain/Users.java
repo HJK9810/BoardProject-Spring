@@ -16,4 +16,8 @@ public class Users extends BaseTime {
     private String name;
     @Column(unique = true)
     private String email;
+
+    @Enumerated(EnumType.STRING)
+    @Column
+    private AdminCheck role;
 }

@@ -5,6 +5,7 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import spring.board.domain.AdminCheck;
 import spring.board.domain.Users;
 
 import java.util.ArrayList;
@@ -20,7 +21,7 @@ public class UserDetailsVO implements UserDetails {
         Collection<GrantedAuthority> authorities = new ArrayList<>();
         authorities.add(new SimpleGrantedAuthority("ROLE_USER"));
 
-        if (user.getEmail().equals("admin")) authorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
+        if (user.getRole().equals(AdminCheck.ADMIN)) authorities.add(new SimpleGrantedAuthority("ROLE_ADMIN"));
 
         return authorities;
     }

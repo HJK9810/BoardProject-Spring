@@ -37,7 +37,7 @@ public class AuthService {
             RefreshToken refreshToken = RefreshToken.builder().key(authentication.getUsername()).value(tokenDto.getRefreshToken()).build();
             refreshTokenRepository.save(refreshToken);
         } catch (NullPointerException e) {
-            log.warn("등록되지 않은 사용자입니다.");
+            throw new NullPointerException("등록되지 않은 사용자입니다.");
         }
 
         // 토큰 발급
@@ -59,21 +59,18 @@ public class AuthService {
         RefreshToken refreshToken = refreshTokenRepository.findByKey(authentication.getName());
 
         // 4. Refresh Token 일치하는지 검사
-        if (refreshToken == null) log.warn("로그아웃 된 사용자입니다.");
-        else if (!refreshToken.getValue().equals(oldToken.getRefreshToken())) log.warn("토큰의 유저 정보가 일치하지 않습니다.");
-        else {
-            // 5. 새로운 토큰 생성
-            Users user = userRepository.findByEmail(authentication.getName()).get();
-            UserTokenDto tokenDto = tokenProvider.generateTokenDto(new UserDetailsVO(user));
-            // 6. 저장소 정보 업데이트
-            RefreshToken newRefreshToken = refreshToken.updateValue(tokenDto.getRefreshToken());
-            refreshTokenRepository.save(newRefreshToken);
-            log.info("토큰이 갱신되었습니다.");
+        if (refreshToken == null) throw new RuntimeException("로그아웃 된 사용자입니다.");
+        else if (!refreshToken.getValue().equals(oldToken.getRefreshToken())) throw new RuntimeException("토큰의 유저 정보가 일치하지 않습니다.");
 
-            // 토큰 발급
-            return tokenDto;
-        }
+        // 5. 새로운 토큰 생성
+        Users user = userRepository.findByEmail(authentication.getName()).get();
+        UserTokenDto tokenDto = tokenProvider.generateTokenDto(new UserDetailsVO(user));
+        // 6. 저장소 정보 업데이트
+        RefreshToken newRefreshToken = refreshToken.updateValue(tokenDto.getRefreshToken());
+        refreshTokenRepository.save(newRefreshToken);
+        log.info("토큰이 갱신되었습니다.");
 
-        return null;
+        // 토큰 발급
+        return tokenDto;
     }
 }

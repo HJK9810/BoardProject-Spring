@@ -36,6 +36,7 @@ public class FileStore {
             multipartFile.transferTo(new File(fileDir + storeFileName));
         } catch (IOException e) {
             log.error("error={}", e.toString()); // print exception
+            throw new RuntimeException("File didn't saved");
         }
 
         return storeFileName;

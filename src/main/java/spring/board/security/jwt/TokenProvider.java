@@ -21,7 +21,8 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.stream.Collectors;
 
-import static io.jsonwebtoken.Jwts.*;
+import static io.jsonwebtoken.Jwts.builder;
+import static io.jsonwebtoken.Jwts.parserBuilder;
 
 @Slf4j
 @Component

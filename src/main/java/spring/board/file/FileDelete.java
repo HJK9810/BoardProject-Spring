@@ -25,8 +25,10 @@ public class FileDelete {
                 // bring file for delete
                 File delFile = new File(fileDir + filename);
                 if (delFile.exists()) {
-                    if (!delFile.delete()) log.error("파일이 삭제되지 않았습니다. 다음 파일을 삭제해주세요. : {}", filename);
-                    else log.info("해당 파일이 성공적으로 삭제되었습니다. : {}", filename);
+                    if (!delFile.delete()) {
+                        log.error("파일이 삭제되지 않았습니다. 다음 파일을 삭제해주세요. : {}", filename);
+                        throw new RuntimeException("File not deleted");
+                    } else log.info("해당 파일이 성공적으로 삭제되었습니다. : {}", filename);
                 }
             }
         }

@@ -48,4 +48,9 @@ public class QuestionController {
     public ResponseEntity<Question> edit(@PathVariable Long id, @ModelAttribute QuestionForm form) {
         return ResponseEntity.ok(questionService.updateQuestion(id, form));
     }
+
+    @DeleteMapping("/del/{id}")
+    public ResponseEntity<Boolean> deleteQuestion(@PathVariable Long id) {
+        return ResponseEntity.ok(questionService.deleteQuestion(id));
+    }
 }

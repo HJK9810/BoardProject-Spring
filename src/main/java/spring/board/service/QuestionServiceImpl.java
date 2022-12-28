@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import spring.board.domain.Answer;
 import spring.board.domain.Question;
 import spring.board.file.FileDelete;
 import spring.board.file.FileStore;
@@ -11,12 +12,15 @@ import spring.board.repository.QuestionRepository;
 import spring.board.repository.UserRepository;
 import spring.board.web.dto.QuestionForm;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class QuestionServiceImpl implements QuestionService{
 
     private final QuestionRepository questionRepository;
     private final UserRepository userRepository;
+    private final AnswerService answerService;
     private final FileStore fileStore;
     private final FileDelete fileDelete;
 
@@ -60,5 +64,18 @@ public class QuestionServiceImpl implements QuestionService{
         });
 
         return questionRepository.findById(id).get();
+    }
+
+    @Override
+    public Boolean deleteQuestion(Long id) {
+        Question question = questionRepository.findById(id).get();
+        List<Answer> answers = question.getAnswers();
+        while (!answers.isEmpty()) {
+            answerService.deleteAnswer(id, answers.get(0).getId());
+        }
+        question.setUsers(null);
+        questionRepository.save(question);
+        questionRepository.delete(question);
+        return true;
     }
 }

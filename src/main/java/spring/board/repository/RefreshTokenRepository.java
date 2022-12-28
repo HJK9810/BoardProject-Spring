@@ -2,6 +2,8 @@ package spring.board.repository;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Repository;
+import spring.board.exception.ApiExceptions;
+import spring.board.exception.ErrorCode;
 import spring.board.web.dto.RefreshToken;
 
 import java.util.HashMap;
@@ -26,7 +28,7 @@ public class RefreshTokenRepository {
         try {
             store.remove(key);
         } catch (Exception e) {
-            throw new RuntimeException("WAS has no token");
+            throw new ApiExceptions(ErrorCode.UNAUTHORIZED_MEMBER);
         }
     }
 }

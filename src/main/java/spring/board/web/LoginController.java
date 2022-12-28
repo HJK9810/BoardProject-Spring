@@ -25,7 +25,7 @@ public class LoginController {
 
     @PostMapping("/login")
     public ResponseEntity<UserTokenDto> login(@RequestBody UserResponseDto user) {
-        log.info("사용자 {}가 로그인 하였습니다.", user.getEmail());
+        log.info("사용자가 로그인을 시도 하였습니다.");
         return ResponseEntity.ok(authService.login(user));
     }
 

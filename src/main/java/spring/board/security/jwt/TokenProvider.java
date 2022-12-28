@@ -11,6 +11,8 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
+import spring.board.exception.ApiExceptions;
+import spring.board.exception.ErrorCode;
 import spring.board.security.UserDetailsVO;
 import spring.board.web.dto.UserTokenDto;
 
@@ -68,7 +70,7 @@ public class TokenProvider {
     public Authentication getAuthentication(String accessToken) {
         Claims claims = parseClaims(accessToken); // 토큰 복호화
 
-        if (claims.get(AUTHORITIES_KEY) == null) throw new RuntimeException("권한 정보가 없는 토큰입니다.");
+        if (claims.get(AUTHORITIES_KEY) == null) throw new ApiExceptions(ErrorCode.INVALID_AUTH_TOKEN);
 
         // 클레임에서 권한 정보 가져오기
         Collection<? extends GrantedAuthority> authorities = Arrays.stream(claims.get(AUTHORITIES_KEY).toString().split(","))
@@ -86,15 +88,14 @@ public class TokenProvider {
             parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
             return true;
         } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
-            log.warn("잘못된 JWT 서명입니다.");
+            throw new ApiExceptions(ErrorCode.WRONG_JWT_SIGNATURE);
         } catch (ExpiredJwtException e) {
-            log.warn("만료된 JWT 토큰입니다.");
+            throw new ApiExceptions(ErrorCode.EXPIRED_JWT_TOKEN);
         } catch (UnsupportedJwtException e) {
-            log.warn("지원되지 않는 JWT 토큰입니다.");
+            throw new ApiExceptions(ErrorCode.JWT_TOKEN_NOT_WORK);
         } catch (IllegalArgumentException e) {
-            log.warn("JWT 토큰이 잘못되었습니다.");
+            throw new ApiExceptions(ErrorCode.WRONG_JWT_TOKEN);
         }
-        return false;
     }
 
     private Claims parseClaims(String accessToken) {

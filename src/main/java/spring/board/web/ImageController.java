@@ -8,6 +8,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import spring.board.exception.ApiExceptions;
+import spring.board.exception.ErrorCode;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -29,8 +31,7 @@ public class ImageController {
             imageByteArray = IOUtils.toByteArray(imageStream);
             imageStream.close();
         } catch (IOException e) {
-            log.error("파일을 찾지 못했습니다.");
-            log.error(e.toString());
+            throw new ApiExceptions(ErrorCode.FILE_NOT_FOUND);
         }
 
         return ResponseEntity.ok(imageByteArray);

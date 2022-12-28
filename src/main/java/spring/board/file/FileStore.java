@@ -4,6 +4,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
+import spring.board.exception.ApiExceptions;
+import spring.board.exception.ErrorCode;
 
 import java.io.File;
 import java.io.IOException;
@@ -35,8 +37,7 @@ public class FileStore {
         try {
             multipartFile.transferTo(new File(fileDir + storeFileName));
         } catch (IOException e) {
-            log.error("error={}", e.toString()); // print exception
-            throw new RuntimeException("File didn't saved");
+            throw new ApiExceptions(ErrorCode.FILE_NOT_SAVED);
         }
 
         return storeFileName;

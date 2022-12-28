@@ -6,6 +6,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import spring.board.domain.Users;
+import spring.board.exception.ApiExceptions;
+import spring.board.exception.ErrorCode;
 import spring.board.repository.RefreshTokenRepository;
 import spring.board.repository.UserRepository;
 import spring.board.security.UserDetailsVO;
@@ -37,9 +39,10 @@ public class AuthService {
             RefreshToken refreshToken = RefreshToken.builder().key(authentication.getUsername()).value(tokenDto.getRefreshToken()).build();
             refreshTokenRepository.save(refreshToken);
         } catch (NullPointerException e) {
-            throw new NullPointerException("등록되지 않은 사용자입니다.");
+            throw new ApiExceptions(ErrorCode.MEMBER_NOT_FOUND);
         }
 
+        log.info("사용자 {}가 로그인 하였습니다.", userResponseDto.getEmail());
         // 토큰 발급
         return tokenDto;
     }
@@ -48,8 +51,7 @@ public class AuthService {
     public UserTokenDto reissue(UserTokenDto oldToken) {
         // 1. Refresh Token 검증
         if (!tokenProvider.validateToken(oldToken.getRefreshToken())) {
-            log.warn("Refresh Token 이 유효하지 않습니다.");
-            return null;
+            throw new ApiExceptions(ErrorCode.INVALID_REFRESH_TOKEN);
         }
 
         // 2. Access Token 에서 User 정보 가져오기
@@ -59,8 +61,8 @@ public class AuthService {
         RefreshToken refreshToken = refreshTokenRepository.findByKey(authentication.getName());
 
         // 4. Refresh Token 일치하는지 검사
-        if (refreshToken == null) throw new RuntimeException("로그아웃 된 사용자입니다.");
-        else if (!refreshToken.getValue().equals(oldToken.getRefreshToken())) throw new RuntimeException("토큰의 유저 정보가 일치하지 않습니다.");
+        if (refreshToken == null) throw new ApiExceptions(ErrorCode.REFRESH_TOKEN_NOT_FOUND);
+        else if (!refreshToken.getValue().equals(oldToken.getRefreshToken())) throw new ApiExceptions(ErrorCode.MISMATCH_REFRESH_TOKEN);
 
         // 5. 새로운 토큰 생성
         Users user = userRepository.findByEmail(authentication.getName()).get();

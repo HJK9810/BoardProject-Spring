@@ -13,14 +13,14 @@ import java.io.IOException;
 @RestControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
-    @ExceptionHandler(RuntimeException.class)
+    @ExceptionHandler(value = ApiExceptions.class)
     public ResponseEntity<ErrorResponse> handleCustomException(ApiExceptions e) {
         ErrorCode errorCode = e.getErrorCode();
         log.error(errorCode.getDetail());
         return handleExceptionInternal(errorCode);
     }
 
-    @ExceptionHandler(IOException.class)
+    @ExceptionHandler(value = IOException.class)
     public ResponseEntity<ErrorResponse> handleCustomException(IOException e) {
         ErrorCode errorCode = ErrorCode.FILE_NOT_FOUND;
         log.error(errorCode.getDetail());

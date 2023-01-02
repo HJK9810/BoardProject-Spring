@@ -2,6 +2,7 @@ package spring.board.security.jwt;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
+import io.jsonwebtoken.security.SecurityException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -68,6 +69,7 @@ public class TokenProvider {
 
     // JWT 토큰에서 인증 정보 조회
     public Authentication getAuthentication(String accessToken) {
+        if (accessToken.equals("undefined")) throw new ApiExceptions(ErrorCode.MEMBER_NOT_FOUND);
         Claims claims = parseClaims(accessToken); // 토큰 복호화
 
         if (claims.get(AUTHORITIES_KEY) == null) throw new ApiExceptions(ErrorCode.INVALID_AUTH_TOKEN);
@@ -87,7 +89,7 @@ public class TokenProvider {
         try {
             parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
             return true;
-        } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
+        } catch (SecurityException | MalformedJwtException e) {
             throw new ApiExceptions(ErrorCode.WRONG_JWT_SIGNATURE);
         } catch (ExpiredJwtException e) {
             throw new ApiExceptions(ErrorCode.EXPIRED_JWT_TOKEN);
@@ -102,8 +104,7 @@ public class TokenProvider {
         try {
             return parserBuilder().setSigningKey(key).build().parseClaimsJws(accessToken).getBody();
         } catch (ExpiredJwtException e) {
-            log.error(e.getMessage());
-            return e.getClaims();
+            throw new ApiExceptions(ErrorCode.WRONG_JWT_SIGNATURE);
         }
     }
 }

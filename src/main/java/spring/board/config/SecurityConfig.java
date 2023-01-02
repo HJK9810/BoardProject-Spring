@@ -33,7 +33,8 @@ public class SecurityConfig {
                 .and().authorizeHttpRequests((authorizeHttpRequests) ->
                         authorizeHttpRequests
                                 .requestMatchers(CorsUtils::isPreFlightRequest).permitAll() // for cors
-                                .requestMatchers("/image/**", "/api/**").permitAll() // show image & login url
+                                // show image & login url & swagger
+                                .requestMatchers("/image/**", "/api/**", "/swagger-ui/**", "/v3/api-docs/**", "/swagger-resources/**").permitAll()
                                 .requestMatchers("/answer/**").hasRole("ADMIN") // admin url
                                 .requestMatchers("/question/**").hasRole("USER")) // user url
                 // TokenProvider -> add JwtFilter to Security filter

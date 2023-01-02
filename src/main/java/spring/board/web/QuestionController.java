@@ -3,6 +3,7 @@ package spring.board.web;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -39,12 +40,12 @@ public class QuestionController {
         return ResponseEntity.ok(questionService.viewOne(id));
     }
 
-    @PostMapping("/add")
+    @PostMapping(value = "/add", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Question> addQuestion(@ModelAttribute QuestionForm form, Authentication auth) {
         return ResponseEntity.ok(questionService.addQuestion(form, auth.getName()));
     }
 
-    @PostMapping("/edit/{id}")
+    @PostMapping(value = "/edit/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Question> edit(@PathVariable Long id, @ModelAttribute QuestionForm form) {
         return ResponseEntity.ok(questionService.updateQuestion(id, form));
     }

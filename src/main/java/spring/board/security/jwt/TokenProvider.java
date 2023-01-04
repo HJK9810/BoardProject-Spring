@@ -1,5 +1,7 @@
 package spring.board.security.jwt;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import io.jsonwebtoken.security.SecurityException;
@@ -18,10 +20,7 @@ import spring.board.security.UserDetailsVO;
 import spring.board.web.dto.UserTokenDto;
 
 import java.security.Key;
-import java.util.Arrays;
-import java.util.Base64;
-import java.util.Collection;
-import java.util.Date;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static io.jsonwebtoken.Jwts.builder;
@@ -32,7 +31,7 @@ import static io.jsonwebtoken.Jwts.parserBuilder;
 public class TokenProvider {
     private static final String AUTHORITIES_KEY = "auth";
     private static final String BEARER_TYPE = "Bearer";
-    private static final long ACCESS_TOKEN_EXPIRE_TIME = 1000 * 60 * 30;            // 30분
+    private static final long ACCESS_TOKEN_EXPIRE_TIME = 1000 * 60 * 6;            // 30분
     private static final long REFRESH_TOKEN_EXPIRE_TIME = 1000 * 60 * 60 * 24 * 7;  // 7일
 
     private final Key key;
@@ -70,7 +69,8 @@ public class TokenProvider {
     // JWT 토큰에서 인증 정보 조회
     public Authentication getAuthentication(String accessToken) {
         if (accessToken.equals("undefined")) throw new ApiExceptions(ErrorCode.MEMBER_NOT_FOUND);
-        Claims claims = parseClaims(accessToken); // 토큰 복호화
+//        Claims claims = parseClaims(accessToken); // 토큰 복호화
+        Map<String, Object> claims = decodeToken(accessToken);
 
         if (claims.get(AUTHORITIES_KEY) == null) throw new ApiExceptions(ErrorCode.INVALID_AUTH_TOKEN);
 
@@ -79,7 +79,7 @@ public class TokenProvider {
                 .map(SimpleGrantedAuthority::new).collect(Collectors.toList());
 
         // UserDetails 객체를 만들어서 Authentication 리턴
-        UserDetails principal = new User(claims.getSubject(), "", authorities);
+        UserDetails principal = new User(claims.get("sub").toString(), "", authorities);
 
         return new UsernamePasswordAuthenticationToken(principal, "", authorities);
     }
@@ -107,6 +107,17 @@ public class TokenProvider {
             return parserBuilder().setSigningKey(key).build().parseClaimsJws(accessToken).getBody();
         } catch (ExpiredJwtException e) {
             throw new ApiExceptions(ErrorCode.WRONG_JWT_SIGNATURE);
+        }
+    }
+
+    private Map<String, Object> decodeToken(String accessToken) {
+        String payload = new String(Base64.getDecoder().decode(accessToken.split("\\.")[1]));
+
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            return mapper.readValue(payload, Map.class);
+        } catch (JsonProcessingException e) {
+            throw new ApiExceptions(ErrorCode.MISMATCH_REFRESH_TOKEN);
         }
     }
 }

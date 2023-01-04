@@ -55,8 +55,8 @@ public class QuestionServiceImpl implements QuestionService{
         String images = fileStore.storeFiles(form.getImages());
 
         questionRepository.findById(id).ifPresent(question -> {
-            if (!question.getTitle().equals(form.getTitle())) question.setTitle(form.getTitle());
-            if (!question.getContents().equals(form.getContents())) question.setContents(form.getContents());
+            if (!question.getTitle().equals(form.getTitle()) && form.getTitle() != null) question.setTitle(form.getTitle());
+            if (!question.getContents().equals(form.getContents()) && form.getContents() != null) question.setContents(form.getContents());
             fileDelete.deleteFile(question.getImages(), form.getSavedImages()); // delete not use
             question.setImages(form.getSavedImages() + images);
 

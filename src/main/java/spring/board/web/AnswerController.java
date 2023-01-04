@@ -1,6 +1,9 @@
 package spring.board.web;
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.enums.ParameterIn;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +15,7 @@ import spring.board.web.dto.AnswerForm;
 
 import java.util.List;
 
+@Tag(name = "Answer API", description = "답변 API")
 @Slf4j
 @RestController
 @RequiredArgsConstructor
@@ -22,28 +26,35 @@ public class AnswerController {
     private final QuestionService questionService;
 
     @GetMapping("/list/{questionId}")
-    public ResponseEntity<List<Answer>> showAnswers(@Parameter(name = "questionId", description = "question's id") @PathVariable Long questionId) {
+    @Operation(summary = "해당 문항 답변보기")
+    public ResponseEntity<List<Answer>> showAnswers(@Parameter(description = "question's id") @PathVariable("questionId") Long questionId) {
         return ResponseEntity.ok(questionService.viewOne(questionId).getAnswers());
     }
 
     @PostMapping("/add/{questionId}")
-    public ResponseEntity<Answer> addAnswer(@Parameter(name = "questionId", description = "question's id") @PathVariable Long questionId, @RequestBody AnswerForm form) {
+    @Operation(summary = "답변 추가")
+    public ResponseEntity<Answer> addAnswer(@Parameter(description = "question's id") @PathVariable("questionId") Long questionId, @RequestBody AnswerForm form) {
         return ResponseEntity.ok(answerService.addAnswer(questionId, form));
     }
 
     @GetMapping("/edit/{id}")
-    public ResponseEntity<Answer> editAnswerView(@Parameter(name = "id", description = "answer's id") @PathVariable Long id) {
+    @Operation(summary = "답변 수정 - Get")
+    public ResponseEntity<Answer> editAnswerView(@Parameter(description = "answer's id") @PathVariable("id") Long id) {
         return ResponseEntity.ok(answerService.viewOne(id));
     }
 
     @PostMapping("/edit/{id}")
-    public ResponseEntity<Answer> editAnswer(@Parameter(name = "id", description = "answer's id") @PathVariable Long id, @RequestBody AnswerForm form) {
+    @Operation(summary = "답변 수정 - Post")
+    public ResponseEntity<Answer> editAnswer(@Parameter(description = "answer's id") @PathVariable("id") Long id, @RequestBody AnswerForm form) {
         return ResponseEntity.ok(answerService.updateAnswer(id, form));
     }
 
     @DeleteMapping("/del/{id}")
-    @Parameter(name = "aId", description = "answer's id")
-    public ResponseEntity<Answer> delAnswer(@Parameter(name = "id", description = "question's id") @PathVariable Long id, @RequestParam("aId") Long answerId) {
+    @Operation(summary = "댓글 삭제", parameters = {
+            @Parameter(name = "id", description = "question's id", in = ParameterIn.PATH),
+            @Parameter(name = "aId", description = "answer's id", in = ParameterIn.QUERY)
+    })
+    public ResponseEntity<Answer> delAnswer(@PathVariable("id") Long id, @RequestParam("aId") Long answerId) {
         return ResponseEntity.ok(new Answer(String.valueOf(answerService.deleteAnswer(id, answerId)), null));
     }
 }

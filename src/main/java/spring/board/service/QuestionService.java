@@ -14,4 +14,6 @@ public interface QuestionService {
     Question addQuestion(QuestionForm form, String email);
     Question updateQuestion(Long id, QuestionForm form);
     Boolean deleteQuestion(Long id);
+
+    Boolean checkUserAvailable(Long id, String email);
 }

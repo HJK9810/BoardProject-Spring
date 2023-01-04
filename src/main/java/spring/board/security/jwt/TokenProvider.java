@@ -89,8 +89,10 @@ public class TokenProvider {
         try {
             parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
             return true;
-        } catch (SecurityException | MalformedJwtException e) {
+        } catch (SecurityException e) {
             throw new ApiExceptions(ErrorCode.WRONG_JWT_SIGNATURE);
+        } catch (MalformedJwtException e) {
+            return false;
         } catch (ExpiredJwtException e) {
             throw new ApiExceptions(ErrorCode.EXPIRED_JWT_TOKEN);
         } catch (UnsupportedJwtException e) {

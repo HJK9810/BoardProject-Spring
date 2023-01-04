@@ -13,6 +13,7 @@ public enum ErrorCode {
     // user error
     MEMBER_NOT_FOUND(NOT_FOUND, "등록되지 않은 사용자입니다."),
     REFRESH_TOKEN_NOT_FOUND(NOT_FOUND, "로그아웃 된 사용자입니다"),
+    MEMBER_NOT_ALLOWED(FORBIDDEN, "허가되지 않은 권한을 가진 사용자입니다."),
 
     // token error
     INVALID_AUTH_TOKEN(UNAUTHORIZED, "권한 정보가 없는 토큰입니다"),

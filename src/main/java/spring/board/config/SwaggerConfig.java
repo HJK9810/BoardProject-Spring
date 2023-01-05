@@ -2,6 +2,7 @@ package spring.board.config;
 
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.annotations.OpenAPI31;
 import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
@@ -10,13 +11,23 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
 
+@OpenAPI31
 @Configuration
 public class SwaggerConfig {
 
     @Bean
-    public GroupedOpenApi publicApi() {
-        return GroupedOpenApi.builder().group("v1-definition")
-                .pathsToMatch("/**").build();
+    public GroupedOpenApi questionApi() {
+        return GroupedOpenApi.builder().group("user-part").pathsToMatch("/question/**", "/api/**").build();
+    }
+
+    @Bean
+    public GroupedOpenApi answerApi() {
+        return GroupedOpenApi.builder().group("admin-part").pathsToMatch("/answer/**", "/api/**").build();
+    }
+
+    @Bean
+    public GroupedOpenApi loginApi() {
+        return GroupedOpenApi.builder().group("login").pathsToMatch("/api/**").build();
     }
 
     @Bean

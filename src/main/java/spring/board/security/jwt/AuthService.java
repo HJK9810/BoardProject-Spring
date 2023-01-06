@@ -30,17 +30,13 @@ public class AuthService {
         // Login ID/PW 를 기반으로 인증 체크
         UserDetailsVO authentication = userRepository.findByEmail(userResponseDto.getEmail()).map(UserDetailsVO::new).orElse(null);
 
-        UserTokenDto tokenDto = null;
-        try {
-            // 인증 정보를 기반으로 JWT 토큰 생성
-            tokenDto = tokenProvider.generateTokenDto(authentication);
+        // 인증 정보를 기반으로 JWT 토큰 생성
+        if (authentication == null) throw new ApiExceptions(ErrorCode.MEMBER_NOT_FOUND);
+        UserTokenDto tokenDto =  tokenProvider.generateTokenDto(authentication);
 
-            // RefreshToken 저장
-            RefreshToken refreshToken = RefreshToken.builder().key(authentication.getUsername()).value(tokenDto.getRefreshToken()).build();
-            refreshTokenRepository.save(refreshToken);
-        } catch (NullPointerException e) {
-            throw new ApiExceptions(ErrorCode.MEMBER_NOT_FOUND);
-        }
+        // RefreshToken 저장
+        RefreshToken refreshToken = RefreshToken.builder().key(authentication.getUsername()).value(tokenDto.getRefreshToken()).build();
+        refreshTokenRepository.save(refreshToken);
 
         log.info("사용자 {}가 로그인 하였습니다.", userResponseDto.getEmail());
         // 토큰 발급
@@ -65,7 +61,7 @@ public class AuthService {
         else if (!refreshToken.getValue().equals(oldToken.getRefreshToken())) throw new ApiExceptions(ErrorCode.MISMATCH_REFRESH_TOKEN);
 
         // 5. 새로운 토큰 생성
-        Users user = userRepository.findByEmail(authentication.getName()).get();
+        Users user = userRepository.findByEmail(authentication.getName()).orElse(null);
         UserTokenDto tokenDto = tokenProvider.generateTokenDto(new UserDetailsVO(user));
         // 6. 저장소 정보 업데이트
         RefreshToken newRefreshToken = refreshToken.updateValue(tokenDto.getRefreshToken());

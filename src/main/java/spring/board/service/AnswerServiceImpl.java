@@ -47,8 +47,9 @@ public class AnswerServiceImpl implements AnswerService {
 
     @Override
     public Boolean deleteAnswer(Long id, Long answerId) {
-        Question question = questionRepository.findById(id).get();
-        Answer answer = answerRepository.findById(answerId).get();
+        Question question = questionRepository.findById(id).orElse(null);
+        Answer answer = answerRepository.findById(answerId).orElse(null);
+        if (question == null || answer == null) return  false;
 
         delete(question, answer);
         return true;

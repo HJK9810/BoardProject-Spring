@@ -67,7 +67,9 @@ public class QuestionServiceImpl implements QuestionService{
 
     @Override
     public Boolean deleteQuestion(Long id) {
-        Question question = questionRepository.findById(id).get();
+        Question question = questionRepository.findById(id).orElse(null);
+        if (question == null) return false;
+
         List<Answer> answers = question.getAnswers();
         while (!answers.isEmpty()) answerService.delete(question, answers.get(0));
 

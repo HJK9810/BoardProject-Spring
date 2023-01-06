@@ -39,8 +39,8 @@ public class QuestionController {
 
         if (!email.equals(userid)) return null;
 
-        if (userRepository.existsByEmail(userid)) return ResponseEntity.ok(questionService.findByUserId(email, pageable));
-        else return ResponseEntity.ok(null);
+        Page<Question> page = userRepository.existsByEmail(userid) ? questionService.findByUserId(email, pageable) : null;
+        return ResponseEntity.ok(page);
     }
 
     @GetMapping("/viewOne/{id}")

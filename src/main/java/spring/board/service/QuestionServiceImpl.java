@@ -36,7 +36,7 @@ public class QuestionServiceImpl implements QuestionService{
 
     @Override
     public Question viewOne(Long id) {
-        return questionRepository.findById(id).get();
+        return questionRepository.findById(id).orElse(null);
     }
 
     @Override
@@ -44,10 +44,9 @@ public class QuestionServiceImpl implements QuestionService{
         String images = fileStore.storeFiles(form.getImages());
 
         Question question = new Question(form.getTitle(), form.getContents(), images);
-        question.setUsers(userRepository.findByEmail(email).get());
-        questionRepository.save(question);
+        userRepository.findByEmail(email).ifPresent(question::setUsers);
 
-        return question;
+        return questionRepository.save(question);
     }
 
     @Override
@@ -63,24 +62,22 @@ public class QuestionServiceImpl implements QuestionService{
             questionRepository.save(question);
         });
 
-        return questionRepository.findById(id).get();
+        return questionRepository.findById(id).orElse(null);
     }
 
     @Override
     public Boolean deleteQuestion(Long id) {
         Question question = questionRepository.findById(id).get();
         List<Answer> answers = question.getAnswers();
-        while (!answers.isEmpty()) {
-            answerService.deleteAnswer(id, answers.get(0).getId());
-        }
+        while (!answers.isEmpty()) answerService.delete(question, answers.get(0));
+
         question.setUsers(null);
-        questionRepository.save(question);
         questionRepository.delete(question);
         return true;
     }
 
     @Override
     public Boolean checkUserAvailable(Long id, String email) {
-        return questionRepository.findById(id).get().getUsers().getEmail().equals(email);
+        return questionRepository.findById(id).map(question -> question.getUsers().getEmail().equals(email)).orElse(false);
     }
 }

@@ -33,7 +33,7 @@ public class AnswerServiceImpl implements AnswerService {
 
     @Override
     public Answer viewOne(Long id) {
-        return answerRepository.findById(id).get();
+        return answerRepository.findById(id).orElse(null);
     }
 
     @Override
@@ -42,18 +42,22 @@ public class AnswerServiceImpl implements AnswerService {
             if (!answer.getContents().equals(form.getContents())) answer.setContents(form.getContents());
             answerRepository.save(answer);
         });
-        return answerRepository.findById(id).get();
+        return answerRepository.findById(id).orElse(null);
     }
 
     @Override
     public Boolean deleteAnswer(Long id, Long answerId) {
         Question question = questionRepository.findById(id).get();
         Answer answer = answerRepository.findById(answerId).get();
+
+        delete(question, answer);
+        return true;
+    }
+
+    @Override
+    public void delete(Question question, Answer answer) {
         answer.setQuestion(null);
         question.getAnswers().remove(answer);
-        questionRepository.save(question);
-
         answerRepository.delete(answer);
-        return true;
     }
 }

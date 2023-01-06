@@ -1,6 +1,7 @@
 package spring.board.service;
 
 import spring.board.domain.Answer;
+import spring.board.domain.Question;
 import spring.board.web.dto.AnswerForm;
 
 public interface AnswerService {
@@ -9,4 +10,5 @@ public interface AnswerService {
     Answer updateAnswer(Long id, AnswerForm form);
 
     Boolean deleteAnswer(Long id, Long answerId);
+    void delete(Question question, Answer answer);
 }

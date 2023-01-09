@@ -43,7 +43,7 @@ public class QuestionController {
 
     @GetMapping("/viewOne/{id}")
     @Operation(summary = "문의사항 상세보기")
-    public ResponseEntity<Question> viewOne(@Parameter(description = "question's id") @PathVariable("id") Long id, Authentication auth) {
+    public ResponseEntity<Question> viewOne(@Parameter(description = "question's id") @PathVariable("id") Long id) {
         return ResponseEntity.ok(questionService.viewOne(id));
     }
 
@@ -55,13 +55,13 @@ public class QuestionController {
 
     @PostMapping(value = "/edit/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.ALL_VALUE)
     @Operation(summary = "문의사항 수정하기")
-    public ResponseEntity<Question> edit(@Parameter(description = "question's id") @PathVariable("id") Long id, @ModelAttribute QuestionForm form, Authentication auth) {
+    public ResponseEntity<Question> edit(@Parameter(description = "question's id") @PathVariable("id") Long id, @ModelAttribute QuestionForm form) {
         return ResponseEntity.ok(questionService.updateQuestion(id, form));
     }
 
     @DeleteMapping("/del/{id}")
     @Operation(summary = "문의사항 삭제하기")
-    public ResponseEntity<Boolean> deleteQuestion(@Parameter(description = "question's id") @PathVariable("id") Long id, Authentication auth) {
+    public ResponseEntity<Boolean> deleteQuestion(@Parameter(description = "question's id") @PathVariable("id") Long id) {
         return ResponseEntity.ok(questionService.deleteQuestion(id));
     }
 }

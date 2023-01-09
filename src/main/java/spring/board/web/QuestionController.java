@@ -11,8 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import spring.board.domain.Question;
-import spring.board.exception.ApiExceptions;
-import spring.board.exception.ErrorCode;
 import spring.board.repository.UserRepository;
 import spring.board.service.QuestionService;
 import spring.board.web.dto.QuestionForm;
@@ -46,7 +44,6 @@ public class QuestionController {
     @GetMapping("/viewOne/{id}")
     @Operation(summary = "문의사항 상세보기")
     public ResponseEntity<Question> viewOne(@Parameter(description = "question's id") @PathVariable("id") Long id, Authentication auth) {
-        if (!questionService.checkUserAvailable(id, auth.getName())) throw new ApiExceptions(ErrorCode.MEMBER_NOT_ALLOWED);
         return ResponseEntity.ok(questionService.viewOne(id));
     }
 
@@ -59,14 +56,12 @@ public class QuestionController {
     @PostMapping(value = "/edit/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE, produces = MediaType.ALL_VALUE)
     @Operation(summary = "문의사항 수정하기")
     public ResponseEntity<Question> edit(@Parameter(description = "question's id") @PathVariable("id") Long id, @ModelAttribute QuestionForm form, Authentication auth) {
-        if (!questionService.checkUserAvailable(id, auth.getName())) throw new ApiExceptions(ErrorCode.MEMBER_NOT_ALLOWED);
         return ResponseEntity.ok(questionService.updateQuestion(id, form));
     }
 
     @DeleteMapping("/del/{id}")
     @Operation(summary = "문의사항 삭제하기")
     public ResponseEntity<Boolean> deleteQuestion(@Parameter(description = "question's id") @PathVariable("id") Long id, Authentication auth) {
-        if (!questionService.checkUserAvailable(id, auth.getName())) throw new ApiExceptions(ErrorCode.MEMBER_NOT_ALLOWED);
         return ResponseEntity.ok(questionService.deleteQuestion(id));
     }
 }

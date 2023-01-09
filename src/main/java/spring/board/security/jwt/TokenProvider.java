@@ -2,9 +2,11 @@ package spring.board.security.jwt;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.jsonwebtoken.*;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.security.Keys;
-import io.jsonwebtoken.security.SecurityException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -84,27 +86,27 @@ public class TokenProvider {
     }
 
     // 토큰의 유효성 + 만료일자 확인
-    public boolean validateToken(String token) {
+    public boolean validateToken(String token) throws ApiExceptions {
+        ErrorCode errorCode;
         try {
             parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
             return true;
-        } catch (SecurityException e) {
-            throw new ApiExceptions(ErrorCode.WRONG_JWT_SIGNATURE);
-        } catch (MalformedJwtException e) {
-            return false;
+        } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
+            errorCode = ErrorCode.WRONG_JWT_SIGNATURE;
         } catch (ExpiredJwtException e) {
-            throw new ApiExceptions(ErrorCode.EXPIRED_JWT_TOKEN);
+            errorCode = ErrorCode.EXPIRED_JWT_TOKEN;
         } catch (UnsupportedJwtException e) {
-            throw new ApiExceptions(ErrorCode.JWT_TOKEN_NOT_WORK);
+            errorCode = ErrorCode.JWT_TOKEN_NOT_WORK;
         } catch (IllegalArgumentException e) {
-            throw new ApiExceptions(ErrorCode.WRONG_JWT_TOKEN);
+            errorCode = ErrorCode.WRONG_JWT_TOKEN;
         }
+        log.error(errorCode.getDetail());
+        throw new ApiExceptions(errorCode);
     }
 
     private Map decodeToken(String accessToken) {
-        String payload = new String(Base64.getDecoder().decode(accessToken.split("\\.")[1]));
-
         try {
+            String payload = new String(Base64.getDecoder().decode(accessToken.split("\\.")[1]));
             return new ObjectMapper().readValue(payload, Map.class);
         } catch (JsonProcessingException e) {
             throw new ApiExceptions(ErrorCode.MISMATCH_REFRESH_TOKEN);

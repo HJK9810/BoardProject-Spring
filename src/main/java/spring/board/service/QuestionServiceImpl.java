@@ -77,9 +77,4 @@ public class QuestionServiceImpl implements QuestionService{
         questionRepository.delete(question);
         return true;
     }
-
-    @Override
-    public Boolean checkUserAvailable(Long id, String email) {
-        return questionRepository.findById(id).map(question -> question.getUsers().getEmail().equals(email)).orElse(false);
-    }
 }

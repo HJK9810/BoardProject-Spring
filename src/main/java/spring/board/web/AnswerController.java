@@ -5,7 +5,6 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import spring.board.domain.Answer;
@@ -16,7 +15,6 @@ import spring.board.web.dto.AnswerForm;
 import java.util.List;
 
 @Tag(name = "Answer API", description = "답변 API")
-@Slf4j
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/answer")

@@ -30,8 +30,8 @@ public class QuestionServiceImpl implements QuestionService{
     }
 
     @Override
-    public Page<Question> findByUserId(String email, Pageable pageable) {
-        return questionRepository.findAllByUsers_Email(email, pageable);
+    public Page<Question> findByUserId(String userid, String email, Pageable pageable) {
+        return userRepository.existsByEmail(userid) ? questionRepository.findAllByUsers_Email(email, pageable) : null;
     }
 
     @Override

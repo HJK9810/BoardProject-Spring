@@ -7,7 +7,7 @@ import spring.board.web.dto.QuestionForm;
 
 public interface QuestionService {
     Page<Question> findList(Pageable pageable);
-    Page<Question> findByUserId(String email, Pageable pageable);
+    Page<Question> findByUserId(String userid, String email, Pageable pageable);
 
     Question viewOne(Long id);
 

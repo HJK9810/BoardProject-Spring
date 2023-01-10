@@ -11,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import spring.board.domain.Question;
-import spring.board.repository.UserRepository;
 import spring.board.service.QuestionService;
 import spring.board.web.dto.QuestionForm;
 
@@ -22,7 +21,6 @@ import spring.board.web.dto.QuestionForm;
 public class QuestionController {
 
     private final QuestionService questionService;
-    private final UserRepository userRepository;
 
     @GetMapping("/list")
     @Operation(summary = "문의사항 전체보기")
@@ -37,7 +35,7 @@ public class QuestionController {
 
         if (!email.equals(userid)) return null;
 
-        Page<Question> page = userRepository.existsByEmail(userid) ? questionService.findByUserId(email, pageable) : null;
+        Page<Question> page = questionService.findByUserId(userid, email, pageable);
         return ResponseEntity.ok(page);
     }
 

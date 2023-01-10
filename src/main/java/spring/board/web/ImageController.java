@@ -23,15 +23,13 @@ public class ImageController {
     // image 반환
     @GetMapping(value = "/image/{fileName}", produces = MediaType.IMAGE_JPEG_VALUE)
     public ResponseEntity<byte[]> userSearch(@PathVariable("fileName") String fileName) {
-        byte[] imageByteArray = null;
         try {
             InputStream imageStream = new FileInputStream(fileDir + fileName);
-            imageByteArray = IOUtils.toByteArray(imageStream);
+            byte[] imageByteArray = IOUtils.toByteArray(imageStream);
             imageStream.close();
+            return ResponseEntity.ok(imageByteArray);
         } catch (IOException e) {
             throw new ApiExceptions(ErrorCode.FILE_NOT_FOUND);
         }
-
-        return ResponseEntity.ok(imageByteArray);
     }
 }

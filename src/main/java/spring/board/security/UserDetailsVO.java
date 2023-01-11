@@ -29,8 +29,8 @@ public class UserDetailsVO implements UserDetails {
     @Override
     public String getPassword() {
         BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-        if (user.getEmail().equals("admin")) return passwordEncoder.encode("admin");
-        else return passwordEncoder.encode("user");
+
+        return user.getRole().equals(AdminCheck.ADMIN) ? passwordEncoder.encode("admin") : passwordEncoder.encode("user");
     }
 
     @Override

@@ -18,5 +18,5 @@ public class QuestionForm {
     private String contents;
     @Schema(name = "images", description = "이미지 파일들")
     private List<MultipartFile> images;
-    private String savedImages;
+    private List<String> savedImages;
 }

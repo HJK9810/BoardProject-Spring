@@ -16,7 +16,7 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class QuestionServiceImpl implements QuestionService{
+public class QuestionServiceImpl implements QuestionService {
 
     private final QuestionRepository questionRepository;
     private final UserRepository userRepository;
@@ -57,7 +57,7 @@ public class QuestionServiceImpl implements QuestionService{
             if (!question.getTitle().equals(form.getTitle()) && form.getTitle() != null) question.setTitle(form.getTitle());
             if (!question.getContents().equals(form.getContents()) && form.getContents() != null) question.setContents(form.getContents());
             fileDelete.deleteFile(question.getImages(), form.getSavedImages()); // delete not use
-            question.setImages(form.getSavedImages() + images);
+            question.setImages(String.join(",", form.getSavedImages() + images));
 
             questionRepository.save(question);
         });

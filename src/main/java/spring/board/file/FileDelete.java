@@ -15,7 +15,7 @@ public class FileDelete {
     @Value("${file.dir}")
     private String fileDir;
 
-    public void deleteFile(String savedFiles, String modifyFiles) {
+    public void deleteFile(String savedFiles, List<String> modifyFiles) {
         List<String> changedFile = checkChangedFile(savedFiles, modifyFiles);
 
         if (!changedFile.isEmpty()) { // 변동사항 있을경우
@@ -34,7 +34,7 @@ public class FileDelete {
         }
     }
 
-    private List<String> checkChangedFile(String savedFiles, String modifyFiles) {
+    private List<String> checkChangedFile(String savedFiles, List<String> modifyFiles) {
         // 저장된 파일중에 삭제한것이 있는지 체크
         return Arrays.stream(savedFiles.split(",")) // change array to stream which is savedFiles split by ","
                 .filter(savedFile -> !modifyFiles.contains(savedFile)) // check modifyFiles contain savedFile
